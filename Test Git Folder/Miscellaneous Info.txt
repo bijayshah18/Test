@@ -1,0 +1,117 @@
+sah.vijaykumar85@gmail.com
+https://www.linkedin.com/in/bijayshah09/
+--------------------------------------------------
+Github:- https://github.com/bijayshah18/Test
+bijayshah18
+--------------------------------------------------
+Persistent:-
+bijayshah/Ramapatidevi@1
+1072123 / 441985
+==================================================================
+Broadband Connection
+--------------------------------
+URL:- 10.14.8.129/0/up
+
+CustomerID:- 10979092779
+Username:- vks_scnc
+Pwd:- 0892
+IP:- 153 / 1234
+
+10.14.8.153
+255.255.255.128
+10.14.8.129
+10.14.8.129
+8.8.8.8
+https://pay2abs.alliancebroadband.in/
+
+Name: Vijay Kumar Sah
+Address: F219 Nona Danga, Anandapur, West Bengal, Kolkata-700105
+CLIENT ID: 10979092779
+Package: STARTER
+Expiry date: 26.09.2020
+E-mail: n/a
+
+Ramapatidevi@1
+------------------------------------------------------------------
+
+vijay / Collection@123
+
+10.16.0.0/16
+SN: 10.16.10.0/24
+SN2: 10.16.20.0/24
+------------------------------------------------------------------------------------------------------------------------------------
+Medtronic
+BijayShah/VijayS
+Ramapatidevi@1
+
+bijayshah09@yahoo.com/Ramapatidevi@1
+DOB:- 09/12/1986
+9123800892
+------------------
+BijayShah/Ramapatidevi@1
+https://uhg.taleo.net/careersection/careersection/candidateacquisition/flow.jsf
+===========================================================================================================
+VBA Learning
+--------------------
+option explicit  ' means all variables must be declared using dim or const
+
+Sub MyFirstMacro()
+' my first macro
+MsgBox("Hello")
+End Sub
+--------------------------------------------------
+Sub MySecondMacro()
+Call MyFirstMacro
+
+EndSub
+
+----------------------------------------------
+types of variables:- number(integer), text(string),date(date), byte, boolean, currency,long, single, double, 
+default datatype-->VARIANT
+
+Dim myfirstvar as integer, x as integer
+const y as integer=9 --> you can assign only once
+x=1
+
+ _ --> to continue a line
+---------------------------------------------------
+debug toolbar==> right click beside 'help' menu and select 'debug'
+open 'locals window' for debugging
+use F8 after keeping cursor in the required  subprocedures
+-----------------------------------------------------------
+watch window
+--------------------------------------------------------------
+breakpoints --> F5
+---------------------------------------------
+scope of vars
+& --> appends
+dim --> local (value is erased when sub ends)
+static --> value is not erased when sub ends as long as a single sub exists
+declare dim at top --> to let it exist across all subs
+
+global vars --> across modules --> declare public at top
+e.g. public q as integer
+
+---------------------------------------------------------
+parameters and subs
+
+Sub MyFirstMacro(strvar as string)
+
+end sub
+
+from another sub
+Call MyFirstMacro("hello")
+----------------------------------------------------------
+functions
+this also returns a value, can be called from sub, excel cell
+
+Function Return1() as Integer
+
+Return1=1                           'returns 1
+
+End Function
+---------------------------------------------------------------
+events
+
+byval --> value can only be accessed but cannot be changed
+==================================================================
