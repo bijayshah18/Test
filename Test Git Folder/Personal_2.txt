@@ -1,0 +1,268 @@
+'Automation_Setup.vbs
+'Global variable
+Set goFileSystem = CreateObject("Scripting.FileSystemObject")
+Set goWshNetwork = CreateObject("Wscript.Network")
+
+'Mapping S drive
+Call MapNetworkDrive("S:","\\seavvfile1\projectmgmt_pmo\6003 Crew Scheduling 2012\Testing\Crew_Tracking_Testing_Team\Cognizant_QC\AUTOMATION")
+'Mapping H drive
+Call MapNetworkDrive("H:","\\seavvfile1\projectmgmt_pmo\6003 Crew Scheduling 2012\Testing\Crew_Tracking_Testing_Team\Cognizant_QC")
+
+'Create Automation_Setup Folder and required files
+Call CreateSetupFiles()
+
+MsgBox "Setup Completed"
+
+Function CreateSetupFiles()
+	sAutomationFolder = "C:\\AUTOMATION_SETUP"
+	sSquishAutomationSetupFile = sAutomationFolder & "\Squish_Setup.ini" 
+	sUFTAutomationSetupFile = sAutomationFolder & "\UFT_Setup.ini" 
+	sSecurityFile = sAutomationFolder & "\Security.ini" 
+	
+	Call CreateSubFolders(sAutomationFolder)
+	
+	If Not goFileSystem.FileExists(sSquishAutomationSetupFile) Then
+		Set oSquishFile = goFileSystem.CreateTextFile(sSquishAutomationSetupFile, True)
+		oSquishFile.Write "[General]" & vbCrLf
+		oSquishFile.Write "SCRIPT_PATH:=C:\TESTDATA\JCMS-Squish\" & vbCrLf
+		oSquishFile.Write "RESULT_PATH:=C:\RESULTS\JCMS-Squish\" & vbCrLf
+		oSquishFile.Write vbCrLf
+		oSquishFile.Write "[Log]" & vbCrLf
+		oSquishFile.Write "CurrentLogID:=0000000001" & vbCrLf
+		oSquishFile.Close
+		Set oSquishFile = Nothing
+	End If
+	
+	If Not goFileSystem.FileExists(sUFTAutomationSetupFile) Then
+		Set oUFTFile = goFileSystem.CreateTextFile(sUFTAutomationSetupFile, True)
+		oUFTFile.Write "[General]" & vbCrLf
+		oUFTFile.Write "SCRIPT_PATH:=C:\TESTDATA\JCMS-UFT\" & vbCrLf
+		oUFTFile.Write "RESULT_PATH:=C:\RESULTS\JCMS-UFT\" & vbCrLf
+		oUFTFile.Write vbCrLf
+		oUFTFile.Write "[Log]" & vbCrLf
+		oUFTFile.Write "CurrentLogID:=0000000001" & vbCrLf
+		oUFTFile.Close
+		Set oUFTFile = Nothing
+	End If
+
+	If Not goFileSystem.FileExists(sSecurityFile) Then
+		sComputerName = UCase(goWshNetwork.ComputerName)
+		Set oSecFile = goFileSystem.CreateTextFile(sSecurityFile, True)
+		oSecFile.Write "[" & sComputerName &"]" & vbCrLf
+		oSecFile.Write "USERNAME:=" & vbCrLf
+		oSecFile.Write "PASSWORD:=" & vbCrLf
+		oSecFile.Write vbCrLf
+		oSecFile.Close
+		Set oSecFile = Nothing
+	End If
+
+End Function
+
+Function CreateSubFolders(ByVal sPath)
+	'On Error Resume Next
+
+	If Not goFileSystem.FolderExists(sPath) Then
+		CreateSubFolders goFileSystem.GetParentFolderName(sPath)
+		goFileSystem.CreateFolder sPath
+		If Err.Number <> 0 Then
+			MsgBox "Directory Creation failed - " & Err.Description
+			Exit Function
+		End If
+	End If
+	
+	If goFileSystem.FolderExists(sPath) Then
+		CreateSubFolders = True
+	Else
+		CreateSubFolders = False
+	End If
+End Function
+
+Function MapNetworkDrive(ByVal sDriveLetter, ByVal sSharePath)
+'====================================================================
+'DESCRIPTION: 	To create a Network Drive
+'AUTHOR: 		Vijay D
+'DATE: 			04Sep14
+'USAGE: 		MapNetworkDrive( sDriveLetter, sSharePath )
+'					sDriveLetter - is drive letter
+'					sSharePath - is the share drive path
+'EXAMPLE: 		MapNetworkDrive "S:","\\seavvfile1\projectmgmt_pmo\6003 Crew Scheduling 2012\Testing\Crew_Tracking_Testing_Team\Cognizant_QC\AUTOMATION"
+'NOTES: 		If the S: Drive is already mapped to any path, this function will 
+'				  remove it and map with the new given path
+'====================================================================
+	'On Error Resume Next
+	Dim sDriveType
+	Dim sCurrentMapping
+	Dim oWMIService 
+	Dim oDisks
+	Dim oDisk
+	Dim oDriveMappings				'Dictionary object
+
+	Set oDriveMappings = CreateObject("Scripting.Dictionary")
+	Set oWMIService = GetObject("winmgmts:" & _
+									"{impersonationLevel=impersonate}!\\.\root\cimv2")
+	Set oDisks = oWMIService.ExecQuery("Select * from Win32_LogicalDisk Where Name = """ & sDriveLetter & """")
+	For Each oDisk In oDisks        
+		sDriveType = oDisk.DriveType      
+		sCurrentMapping = oDisk.ProviderName
+	Next    
+
+	Set oFSO = CreateObject("Scripting.FileSystemObject")
+	If Not oFSO.FolderExists( sSharePath ) Then
+		Exit Function
+	End If
+	If ( ( sDriveType <> 4) And ( sDriveType <> 0 ) ) Then
+		Exit Function
+	End If
+
+	If ( UCase( sCurrentMapping ) = UCase( sSharePath ) ) Then
+		Exit Function
+	End If
+
+	If ( oDriveMappings.Exists( sSharePath ) ) Then
+		oDriveMappings.Add sSharePath & "(" & sDriveLetter & ")", sDriveLetter
+	Else 
+		oDriveMappings.Add sSharePath, sDriveLetter
+	End If
+
+	If ( sCurrentMapping <> "" ) Then
+		goWshNetwork.RemoveNetworkDrive sDriveLetter, True
+	End If
+	goWshNetwork.MapNetworkDrive sDriveLetter, sSharePath, True
+	'On Error Goto 0
+End Function
+-----------------------------------------------------------------------------------------------------
+'CopyLatestCode.bat
+md C:\TESTDATA\JCMS-Squish
+xcopy S:\TESTDATA\JCMS-Squish C:\TESTDATA\JCMS-Squish /sy
+pause
+-----------------------------------------------------------------------------------------------------
+'Dont Lock
+Dim wshShell
+Dim intCount
+
+Set wshShell= CreateObject("WScript.Shell")
+intCount=True
+
+Do While intCount = True
+  wshShell.SendKeys "{NUMLOCK}"
+  WScript.Sleep(10)
+  wshShell.SendKeys "{NUMLOCK}"
+  WScript.Sleep(60000)
+Loop
+-----------------------------------------------------------------------------------------------------
+'SquishServer.bat
+::To start Squish server
+::12.16.2015 - Added the below statement for Squish 6 as the hooking of 
+::             sub-process was not working from QC without this env variable
+set SQUISH_HOOK_SUBPROCESSES=1
+cd C:\Tools\Squish\bin\
+squishserver.exe
+
+-----------------------------------------------------------------------------------------------------
+'SquishConfigure.bat::To start Squish server
+::12.16.2015 - Added the below statement for Squish 6 as the hooking of 
+::             sub-process was not working from QC without this env variable
+FOR /F "skip=2 tokens=2*" %%a IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment" /v CurrentVersion') DO set CurVer=%%b
+FOR /F "skip=2 tokens=2*" %%i IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\JavaSoft\Java Runtime Environment\%CurVer%" /v JavaHome') DO set JavaPath=%%j
+C:\Tools\Squish\bin\squishconfig.exe --java="%JavaPath%"
+C:\Tools\Squish\bin\squishconfig.exe --licensekey "CPD-2AC3A-2SDJP-22F"
+::Configuring server
+C:\Tools\Squish\bin\squishserver.exe --config addAUT "javaws" "%JavaPath%\bin"
+C:\Tools\Squish\bin\squishserver.exe --config setAUTTimeout 90
+C:\Tools\Squish\bin\squishserver.exe --config setResponseTimeout 300
+C:\Tools\Squish\bin\squishserver.exe --config setAUTPostMortemTimeout 200000
+pause
+-----------------------------------------------------------------------------------------------------
+'UpdateRegistry&Restart.bat:: This will udpate the registry, and this will come to effect only after restart
+REG ADD "HKCU\Control Panel\Desktop" /v ForegroundLockTimeout /t REG_DWORD /d 0 /f
+:: Restarting
+shutdown -t 0 -r -f
+-----------------------------------------------------------------------------------------------------
+'32BitSquishConfigure.bat
+::To start Squish server
+::12.16.2015 - Added the below statement for Squish 6 as the hooking of 
+::             sub-process was not working from QC without this env variable
+FOR /F "skip=2 tokens=2*" %%a IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\JavaSoft\Java Runtime Environment" /v CurrentVersion') DO set CurVer=%%b
+FOR /F "skip=2 tokens=2*" %%i IN ('REG QUERY "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\JavaSoft\Java Runtime Environment\%CurVer%" /v JavaHome') DO set JavaPath=%%j
+C:\Tools\Squish\bin\squishconfig.exe --java="%JavaPath%"
+::Configuring server
+C:\Tools\Squish\bin\squishserver.exe --config addAUT "javaws" "%JavaPath%\bin"
+C:\Tools\Squish\bin\squishserver.exe --config setAUTTimeout 90
+C:\Tools\Squish\bin\squishserver.exe --config setResponseTimeout 300
+C:\Tools\Squish\bin\squishserver.exe --config setAUTPostMortemTimeout 200000
+pause
+
+-----------------------------------------------------------------------------------------------------
+'JepessenUninstall.bat
+javaws -uninstall
+javaws -clearcache
+set folder="%USERPROFILE%\AppData\Local\Jeppesen"
+echo %folder%
+cd /d %folder%
+for /F "delims=" %%i in ('dir /b') do (rmdir "%%i" /s/q || del "%%i" /s/q)
+set folder="%USERPROFILE%\AppData\Roaming\Jeppesen"
+cd /d %folder%
+for /F "delims=" %%i in ('dir /b') do (rmdir "%%i" /s/q || del "%%i" /s/q
+-----------------------------------------------------------------------------------------------------
+'KillRemoteAgent.bvs
+Dim wshShell
+Dim intCount
+
+Set wshShell= CreateObject("WScript.Shell")
+intCount=True
+Dim objWMIService, colProcessList
+Set fso = CreateObject("Scripting.FileSystemObject")
+
+Do While intCount = True
+  'wshShell.SendKeys "{NUMLOCK}"
+  'WScript.Sleep(10)
+  'wshShell.SendKeys "{NUMLOCK}"
+	myProcess = "squishremoteagent.exe"
+	'myProcess = "notepad.exe"
+	WScript.Sleep(15000)
+	If (fso.FileExists("C:\kill.txt")) Then
+		WScript.Sleep(30000)
+		If (fso.FileExists("C:\kill.txt")) Then
+			fso.DeleteFile "C:\kill.txt"		
+			Set colProcesses = GetObject( _
+								   "winmgmts:{impersonationLevel=impersonate}" _
+								   ).ExecQuery( "Select * From Win32_Process", , 48 )
+			For Each objProcess in colProcesses
+				If LCase( myProcess ) = LCase( objProcess.Name ) Then
+					' Confirm that the process was actually running
+					blnRunning = True
+					' Get exact case for the actual process name
+					myProcess  = objProcess.Name
+					' Kill all instances of the process
+					objProcess.Terminate()
+				End If
+			Next
+		End If
+	End If
+Loop
+#========================================================================================================
+def setCapsLockOFF():
+    if (isCapsLockOn()):
+        RobotClass = java_lang_Class.forName("java.awt.Robot")
+        KeyEventClass = java_lang_Class.forName("java.awt.event.KeyEvent")
+        ro = java_awt_Robot()
+        ro.keyPress(java_awt_event_KeyEvent.VK_CAPS_LOCK)
+        ro.delay(20)
+        ro.keyRelease(java_awt_event_KeyEvent.VK_CAPS_LOCK)
+        if (not isCapsLockOn()):
+            logResult(giNone, "Cap lock check", "Caps locked was ON, its been set to OFF")
+#========================================================================================================
+def isCapsLockOn():
+    VK_CAPITAL = 0x14
+    if (ctypes.windll.user32.GetKeyState(VK_CAPITAL) & 1):
+        return True
+    else:
+        return False
+#========================================================================================================
+def sendKeys_Tab():
+    RobotClass = java_lang_Class.forName("java.awt.Robot")
+    KeyEventClass = java_lang_Class.forName("java.awt.event.KeyEvent")
+    ro = java_awt_Robot()
+    ro.keyPress(java_awt_event_KeyEvent.VK_TAB)
+#========================================================================================================
+waitForObject(ongLauncherShell).forceActive()
