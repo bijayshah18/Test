@@ -6,4 +6,5 @@ t = {a,b,c,d}
 print("Variable value after packing:",t)
 print("Packed variable type:",type(t))
 x,y,z,p = t
+
 print("variable values after unpacking:",x,y,z,p)
