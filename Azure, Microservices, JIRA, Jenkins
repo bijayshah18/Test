@@ -1,0 +1,1105 @@
+AZ104 Administrator
+What is Azure Virtual Network ?
+An Azure Virtual Network (VNet) is a representation of your own network in the cloud. It is a logical isolation of the Azure cloud dedicated to your subscription. Each VNet you create has its own CIDR block and can be linked to other VNets and on-premises networks as long as the CIDR blocks do not overlap. When you create a VNet, your services and VMs within your VNet can communicate directly and securely with each other in the cloud.
+Managing Virtual Network in Azure
+	Some major Azure Virtual Network Components:-
+	a) Virtual Network
+	b) IP Address Range
+	c) Subnets
+	d) NIC
+Virtual Network : We can consider it as a dedicated LAN created for our subscription to place the VMs. IPv4 Private IP Address Range:-
+	Class A : 10.0.0.0/8
+	Class B : 172.16.0.0/16 to 172.31.0.0/16
+	Class C : 192.168.0.0/24 to 192.168.255.0/24
+	IP Address Range : 10.0.0.0/8
+You cannot add the following address ranges:
+    	224.0.0.0/4 (Multicast)
+   	255.255.255.255/32 (Broadcast)
+   	127.0.0.0/8 (Loopback)
+   	169.254.0.0/16 (Link-local)
+   	168.63.129.16/32 (Internal DNS)
+Subnet : The portion of IP Address that we allocate to our VMs from the IP Address range
+Subnet  : 10.0.0.0/24
+		Firt Allocatable IP Address will start from 10.0.0.4/24
+		10.0.0.0/24  Subnet Id
+		10.0.0.1/24  Reserved Gateway IP Address
+		10.0.0.2/24
+		10.0.0.3/24  Both are reserved for DNS
+		10.0.0.255/24 Broadcast
+NIC : Gets automatically created when we create a VM. Helps that VM to communicate with other VMs of the same or other subnets, even with VMs from different Virtual Networks.
+What is a Virtual Machine ?
+A virtual machine is a computer file, typically called an image, which behaves like an actual computer. In other words, creating a computer within a computer. It runs in a window, much like any other programme, giving the end user the same experience on a virtual machine as they would have on the host operating system itself. The virtual machine is sandboxed from the rest of the system, meaning that the software inside a virtual machine cannot escape or tamper with the computer itself. This produces an ideal environment for testing other operating systems including beta releases, accessing virus-infected data, creating operating system backups and running software or applications on operating systems for which they were not originally intended.
+Multiple virtual machines can run simultaneously on the same physical computer. For servers, the multiple operating systems run side-by-side with a piece of software called a hypervisor to manage them. Each virtual machine provides its own virtual hardware, including CPUs, memory, hard drives, network interfaces and other devices. The virtual hardware is then mapped to the real hardware on the physical machine which saves costs by reducing the need for physical hardware systems along with the associated maintenance costs that go with it, plus reduces power and cooling demand.
+Azure Virtual Machines (VM) is one of several types of on-demand, scalable computing resources that Azure offers. Typically, you choose a VM when you need more control over the computing environment than the other choices offer.
+An Azure VM gives you the flexibility of virtualization without having to buy and maintain the physical hardware that runs it. However, you still need to maintain the VM by performing tasks, such as configuring, patching, and installing the software that runs on it.
+### What do I need to think about before creating a VM?
+-	The names of your application resources
+-	The location where the resources are stored
+-	The size of the VM
+-	The maximum number of VMs that can be created
+-	The operating system that the VM runs
+-	The configuration of the VM after it starts
+-	The related resources that the VM needs
+# Naming
+A virtual machine has a name assigned to it and it has a computer name configured as part of the operating system. The name of a VM can be up to 15 characters.
+# Locations
+All resources created in Azure are distributed across multiple geographical regions around the world. Usually, the region is called location when you create a VM. For a VM, the location specifies where the virtual hard disks are stored.
+# VM size
+The size of the VM that you use is determined by the workload that you want to run. The size that you choose then determines factors such as processing power, memory, and storage capacity. Azure offers a wide variety of sizes to support many types of uses.
+** Azure charges an hourly price based on the VM’s size and operating system. For partial hours, Azure charges only for the minutes used. Storage is priced and charged separately.
+# VM Limits
+Your subscription has default quota limits in place that could impact the deployment of many VMs for your project. The current limit on a per subscription basis is 20 VMs per region. Limits can be raised by filing a support ticket requesting an increase
+# Operating system disks and images
+-	Virtual machines use virtual hard disks (VHDs) to store their operating system (OS) and data. VHDs are also used for the images you can choose from to install an OS.
+-	Azure provides many marketplace images to use with various versions and types of Windows Server operating systems and Linux based operating systems. Marketplace images are identified by image publisher, offer, sku, and version (typically version is specified as latest). 
+-	Only 64-bit operating systems are supported.
+
+# Related resources
+The resources in this table are used by the VM and need to exist or be created when the VM is created
+Resource		Required	Description
+Resource group	Yes	The VM must be contained in a resource group
+Storage account	Yes	The VM needs the storage account to store its virtual hard disks.
+Virtual network	Yes	The VM must be a member of a virtual network.
+Public IP address	No	VM can have a public IP address assigned to it to remotely access it
+Network interface	Yes	The VM needs the network interface to communicate in the network 
+Data disks		No	The VM can include data disks to expand storage capabilities
+# What are the password requirements when creating a VM?
+There are varying password length requirements, depending on the tool you are using:
+	Portal - between 12 - 72 characters
+	PowerShell - between 8 - 123 characters
+	CLI - between 12 - 123
+- Have lower characters
+- Have upper characters
+- Have a digit
+- Have a special character
+- The following passwords are not allowed:
+abc@123		iloveyou!		P@$$w0rd	P@ssw0rd		P@ssword123
+Pa$$word	pass@word1	Password!	Password1	Password22
+
+###  Resize a Windows VM
+After you create a virtual machine (VM), you can scale the VM up or down by changing the VM size. In some cases, you must deallocate the VM first. This can happen if the new size is not available on the hardware cluster that is currently hosting the VM
+When considering the ability to resize virtual machines there are three key concepts that will impact how simple it is to change the size of your VM
+The region in which your VM is deployed. Different VM sizes require different physical hardware. In some instances, an Azure region may not contain the hardware required to support the desired VM size. All Azure regions support the VM sizes Standard_A0 – A7 and Basic_A0 – A4. 
+The physical hardware currently hosting your VM. If the physical hardware currently running your virtual machine also supports your desired new size, then it is very easy to change the VM size through a simple size change operation which results in a VM reboot
+The deployment model used for the VM. The two deployment models are Classic and Resource Manager. The Resource Manager model is the newer model, and it supports some ease of use functionality not available in the classic deployment model
+If your VM uses Premium Storage, make sure that you choose an  version of the size to get Premium Storage support. For example, choose Standard_E4s_v3 instead of Standard_E4_v3
+Task 4.  Resize your virtual machine. Scale it up. Once done then scale it down to the original size.
+Task 5. Attach an additional NIC with your virtual machine.
+Task 6. Getting Public IP Address for a NIC
+Task 7. Reserving IP Address for NIC
+### Manage Azure disks
+Azure virtual machines use disks to store the VMs operating system, applications, and data. When creating a VM, it's important to choose a disk size and configuration appropriate to the expected workload.
+## Default Azure disks
+When an Azure virtual machine is created, two disks are automatically attached to the virtual machine.
+  -- Operating system disk - Operating system disks can be sized up to 4 terabytes, and hosts the VMs operating system. The OS disk is assigned a drive letter of C: by default. The disk caching configuration of the OS disk is optimized for OS performance. The OS disk should not host applications or data. For applications and data, use a data disk.
+  -- Temporary disk - Temporary disks use a solid-state drive that is located on the same Azure host as the VM. Temp disks are highly performant and may be used for operations such as temporary data processing. However, if the VM is moved to a new host, any data stored on a temporary disk is removed. The size of the temporary disk is determined by the VM size. Temporary disks are assigned a drive letter of D: by default.
+Additional data disks can be added for installing applications and storing data. Data disks should be used in any situation where durable and responsive data storage is needed. The size of the virtual machine determines how many data disks can be attached to a VM. For each VM vCPU, four data disks can be attached.
+Azure managed disks currently offers four disk types, each type is aimed towards specific customer scenarios. They are ultra disks, premium solid-state drives (SSD), standard SSD, and standard hard disk drives (HDD).
+# Ultra disk
+Azure ultra disks deliver high throughput, high IOPS, and consistent low latency disk storage for Azure IaaS VMs. Some additional benefits of ultra disks include the ability to dynamically change the performance of the disk, along with your workloads, without the need to restart your virtual machines (VM). Ultra disks are suited for data-intensive workloads such as SAP HANA, top tier databases, and transaction-heavy workloads. Ultra disks can only be used as data disks. We recommend using premium SSDs as OS disks.
+Performance
+When you provision an ultra disk, you can independently configure the capacity and the performance of the disk. Ultra disks come in several fixed sizes, ranging from 4 GiB up to 64 TiB, and feature a flexible performance configuration model that allows you to independently configure IOPS and throughput.
+Some key capabilities of ultra disks are:
+    - Disk capacity: Ultra disks capacity ranges from 4 GiB up to 64 TiB.
+    - Disk IOPS: Ultra disks support IOPS limits of 300 IOPS/GiB, up to a maximum of 160 K IOPS per disk. To achieve the IOPS that you provisioned, ensure that the selected Disk IOPS are less than the VM IOPS limit. The minimum guaranteed IOPS per disk is 2 IOPS/GiB, with an overall baseline minimum of 100 IOPS. For example, if you had a 4 GiB ultra disk, you will have a minimum of 100 IOPS, instead of eight IOPS.
+    - Disk throughput: With ultra disks, the throughput limit of a single disk is 256 KiB/s for each provisioned IOPS, up to a maximum of 2000 MBps per disk (where MBps = 10^6 Bytes per second). The minimum guaranteed throughput per disk is 4KiB/s for each provisioned IOPS, with an overall baseline minimum of 1 MBps.
+    - Ultra disks support adjusting the disk performance attributes (IOPS and throughput) at runtime without detaching the disk from the virtual machine. Once a disk performance resize operation has been issued on a disk, it can take up to an hour for the change to actually take effect. There is a limit of four performance resize operations during a 24 hour window. It is possible for a performance resize operation to fail due to a lack of performance bandwidth capacity.
+# Premium SSD
+Azure premium SSDs deliver high-performance and low-latency disk support for virtual machines (VMs) with input/output (IO)-intensive workloads. To take advantage of the speed and performance of premium storage disks, you can migrate existing VM disks to Premium SSDs. Premium SSDs are suitable for mission-critical production applications. Premium SSDs can only be used with VM series that are premium storage-compatible.
+# Standard SSD
+Azure standard SSDs are a cost-effective storage option optimized for workloads that need consistent performance at lower IOPS levels. Standard SSD offers a good entry level experience for those who wish to move to the cloud, especially if you experience issues with the variance of workloads running on your HDD solutions on premises. Compared to standard HDDs, standard SSDs deliver better availability, consistency, reliability, and latency. Standard SSDs are suitable for Web servers, low IOPS application servers, lightly used enterprise applications, and Dev/Test workloads. Like standard HDDs, standard SSDs are available on all Azure VMs.
+# Standard HDD
+Azure standard HDDs deliver reliable, low-cost disk support for VMs running latency-insensitive workloads. With standard storage, the data is stored on hard disk drives (HDDs). Latency, IOPS, and Throughput of Standard HDD disks may vary more widely as compared to SSD-based disks. Standard HDD Disks are designed to deliver write latencies under 10ms and read latencies under 20ms for most IO operations, however the actual performance may vary depending on the IO size and workload pattern. When working with VMs, you can use standard HDD disks for dev/test scenarios and less critical workloads. Standard HDDs are available in all Azure regions and can be used with all Azure VMs.
+### Encryption
+Azure Managed disks offer two different kinds of encryption. The first is Server Side Encryption (SSE), which is performed by the storage service. The second one is Azure Disk Encryption (ADE), which you can enable on the OS and data disks for your VMs.
+# Server-side encryption
+Azure Server-side Encryption provides encryption-at-rest and safeguards your data to meet your organizational security and compliance commitments. Server-side encryption is enabled by default for all managed disks, snapshots, and images, in all the regions where managed disks are available. Temporary disks, on the other hand, are not encrypted by Storage Service Encryption.
+You can either allow Azure to manage your keys for you, these are platform-managed keys, or you can manage the keys yourself, these are customer-managed keys. Visit the Managed Disks FAQ page for more details.
+# Azure Disk Encryption
+Azure Disk Encryption allows you to encrypt the OS and Data disks used by an IaaS Virtual Machine. This encryption includes managed disks. For Windows, the drives are encrypted using industry-standard BitLocker encryption technology. For Linux, the disks are encrypted using the DM-Crypt technology. The encryption process is integrated with Azure Key Vault to allow you to control and manage the disk encryption keys. For more information, see Azure Disk Encryption for Linux VMs or Azure Disk Encryption for Windows VMs.
+Task 8. Attach a managed data disk to a Windows VM
+Task 9. Initialize the new data disk in Windows VM
+Task 10. Resize the disk
+### Disk caching
+ - A cache is a specialized component that stores data, typically in memory so that it can be accessed more quickly. The data in a cache is often data that has been read previously or data that resulted from an earlier calculation. The goal is to access data faster than getting it from the disk.
+ - Caching uses specialized, and sometimes expensive, temporary storage that has faster read and write performance than permanent storage. Because cache storage is often limited, decisions need to be made as to what data operations will benefit most from caching.
+ - But even where the cache can be made widely available, such as in Azure, it's still important to know the workload patterns of each disk before deciding which caching type to use.
+## Disk Cache Type
+ - Read caching tries to speed up data retrieval. Instead of reading from permanent storage, the data is read from the faster cache. Data reads hit the cache under the following conditions:
+	- The data has been read before and exists in the cache.
+	- The cache is large enough to hold all the data.
+  - It's important to note that read caching helps when there is some predictability to the read queue, such as a set of sequential reads. For random I/O, where the data you're accessing is scattered across storage, caching will be of little or no benefit and can even reduce disk performance.
+  - Write caching tries to speed up writing data to persistent storage. By using a write cache, the app can consider the data to be saved. In reality, the data is queued in a cache, waiting to be written to a disk. As you can imagine, this mechanism can be a potential point of failure, such as when a system shuts down before the cached data is written. Some systems, such as SQL Server, handle writing cached data to persistent disk storage themselves.
+ ## Cache options for Azure VMs Disk
+There are three common options for VM disk caching:
+  - Read/write – Write-back cache. Use this option only if your application properly handles writing cached data to persistent disks when needed.
+  - Read-only - Reads are done from the cache.
+None - No cache. Select this option for   - write-only and write-heavy disks. Log files are a good candidate because they're write-heavy operations.
+Task 11. Change the cache settings of the newly attaced disks
+
+What is scalability? 
+Scalability refers to the ability to increase or reduce systems performance, resources and functionalities according to the needs.
+Azure virtual machine scale sets let you create and manage a group of load balanced VMs. The number of VM instances can automatically increase or decrease in response to demand or a defined schedule. Scale sets provide high availability to your applications, and allow you to centrally manage, configure, and update a large number of VMs. With virtual machine scale sets, you can build large-scale services for areas such as compute, big data, and container workloads.
+
+Why use virtual machine scale sets?
+To provide redundancy and improved performance, applications are typically distributed across multiple instances. Customers may access your application through a load balancer that distributes requests to one of the application instances. If you need to perform maintenance or update an application instance, your customers must be distributed to another available application instance. To keep up with additional customer demand, you may need to increase the number of application instances that run your application.
+Azure virtual machine scale sets provide the management capabilities for applications that run across many VMs, automatic scaling of resources, and load balancing of traffic. Scale sets provide the following key benefits:
+    ==> Easy to create and manage multiple VMs
+        When you have many VMs that run your application, it's important to maintain a consistent configuration across your environment. For reliable performance of your application, the VM size, disk configuration, and application installs should match across all VMs.
+        With scale sets, all VM instances are created from the same base OS image and configuration. This approach lets you easily manage hundreds of VMs without additional configuration tasks or network management.
+        Scale sets support the use of the Azure load balancer for basic layer-4 traffic distribution, and Azure Application Gateway for more advanced layer-7 traffic distribution and TLS termination.
+
+    ==> Provides high availability and application resiliency
+        Scale sets are used to run multiple instances of your application. If one of these VM instances has a problem, customers continue to access your application through one of the other VM instances with minimal interruption.
+        For additional availability, you can use Availability Zones to automatically distribute VM instances in a scale set within a single datacenter or across multiple datacenters.
+    ==> Allows your application to automatically scale as resource demand changes
+        Customer demand for your application may change throughout the day or week. To match customer demand, scale sets can automatically increase the number of VM instances as application demand increases, then reduce the number of VM instances as demand decreases.
+        Autoscale also minimizes the number of unnecessary VM instances that run your application when demand is low, while customers continue to receive an acceptable level of performance as demand grows and additional VM instances are automatically added. This ability helps reduce costs and efficiently create Azure resources as required.
+    ==> Works at large-scale
+        Scale sets support up to 1,000 VM instances. If you create and upload your own custom VM images, the limit is 600 VM instances.
+ACI (Azure Container Instance) Deployment
+1) sudo -i
+2) dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo  	#dnf config-manager --add-repo=https://download.docker.com/linux/centos/8/x86_64/stable/docker-ce.repo
+3) dnf list docker-ce 				#yum list docker-ce
+4) dnf install npm docker-ce --nobest -y
+5) systemctl enable --now docker
+6) docker --version
+7) docker run hello-world
+8) docker images
+9) docker ps -a
+10) curl -LO https://github.com/dockersamples/node-bulletin-board/archive/master.zip
+11) file master.zip
+12) unzip master.zip
+13) ls
+14) cd node-bulletin-board-master/bulletin-board-app/
+15) cat Dockerfile
+16) docker build --network host --tag bulletinboard:1.0  . 				#To create images
+17) docker images
+18) docker run --publish 8000:8080 --detach --name  bb  bulletinboard:1.0
+19) docker ps -a
+20) docker login vksregistry.azurecr.io
+Username: vksregistry
+Password:
+
+21) docker tag bulletinboard:1.0 agregistry.azurecr.io/bulletinboard:1.0 			#Upload Image_1
+22) docker push agregistry.azurecr.io/bulletinboard:1.0 				#Upload Image_2
+
+Some other useful commands:-
+    a. yum clean all
+    b. yum repolist all
+    c.  host www.google.com
+    d.  cd /etc/yum.repos.d
+    e.  ls
+    f.  cat docker-ce.repo
+    g.  less docker-ce.repo
+    h.  vim docker-ce.repo
+    i.  yum repolist all
+
+AKS Deployment
+Menifest file location:- https://github.com/Azure-Samples/azure-voting-app-redis/blob/master/azure-vote-all-in-one-redis.yaml
+
+1) az aks get-credentials --resource-group  XXXX  --name XXXXX 	# connets Kubernettis cluster. Downloads the credentials
+2 ) kubectl  get nodes 					#verify credentials/ connection
+
+3) vi aks.yaml 						#deploy the menifest file by copy and paste the menifest file content
+4) kubectl apply -f aks.yaml 					#apply
+
+5) kubectl get service azure-vote-front --watch 			#check if running properly
+6) Copy the EXTERNAL -IP and paste in browser
+
+Creating VM through Cloud Shell --> az deployment group create --resource-group <resource-group-name> --template-file <path-to-template>
+
+Creating VM through Powershell --> 
+> $PSVersionTable
+> Get-Module -ListAvailable -Name Az*			#Check if module starting with Az is there or not
+> Install-Module -Name Az -AllowClobber			#AllowClobber overrides warning messages. force can alos be used. [Admin right is required for downloading this]
+
+> Get-Module -ListAvailable -Name Az*
+> Set-ExecutionPolicy Unrestricted
+
+> Connect-AzAccount
+> Get-AzSubscription
+> Set-AzContext -SubscriptionName "Free Trial"
+
+> Get-AzResourceGroup 
+
+> New-AzResourceGroup -Name "RG01" -Location "eastus"
+> Get-AzResourceGroup 
+
+> $cred = Get-Credential -Message "Enter User name and password"
+
+> New-AzVM -Name "VM01" -ResourceGroupName "RG01" -Location "East US" -VirtualNetworkName "myVNet" -AddressPrefix "172.16.0.0/16"  -SubnetName "Production"  -SubnetAddressPrefix "172.16.10.0/24" -PublicIpAddressName "myPIP" -OpenPorts  80,3389  -Image Win2016Datacenter -Size "Standard_DS1_v2" -Credential $cred
+
+> Get-AzPublicIpAddress -ResourceGroupName "RG01" | select "Name","IpAddress"
+
+> mstsc /v:ipaddress
+
+> Stop-AzVM -ResourceGroupName "RG01" -Name "VM01"
+
+> Remove-AzResourceGroup -Name "RG01"
+
+> Disconnect-AzAccount
+
+> Get-Help  New-AzVM
+
+> Get-AzVMSize -Location "East US"
+
+> Get-AzVMSize -Location "East US" | Where NumberOfCores -eq 4
+
+> Get-AzVMSize -Location "East US" | Where {($_.NumberOfCores -eq '16') -And ($_.MaxDataDiskCount -eq '16')}
+
+New-AzVm -Name "linuxvm01" -ResourceGroupName "RG01" -Location "East US" -VirtualNetworkName "myVNet" -AddressPrefix "172.16.0.0/16"  -SubnetName "Production"  -SubnetAddressPrefix "172.16.10.0/24" -PublicIpAddressName "myPIP1" -OpenPorts  80,22 -Image "RHEL" -Size "Standard_DS1_v2" -Credential $cred
+## Using multiple Azure subscriptions
+You can create multiple subscriptions under a single Azure account. This is particularly useful for businesses because access control and billing occur at the subscription level, not the account level.
+## Access Management
+You can create separate subscriptions on your Azure account to reflect different organizational structures. For example, you could limit engineering to lower-cost resources, while allowing the IT department a full range. This design allows you to manage and control access to the resources that users provision within each subscription. These kind of flexibility can be obtained through the Azure EA Subscription.
+==> Billing
+One bill is generated for every Azure subscription on a monthly basis. The payment is charged automatically to the associated account credit or debit card within 10 days after the billing period ends. On your credit card statement, the line item would say MSFT Azure.
+You can analyze your bill in the Azure portal – this will provide access to all your invoices, as well as a cost analysis breakdown of what got charged each month.
+You can set spending limits on each subscription to ensure you aren’t surprised at the end of the month. Reports can be generated by subscriptions, if you have multiple internal departments and need to do “chargeback,” a possible scenario is to create subscriptions by department or project.
+## Azure Account Roles
+  - Account Administrator : One per Azure Account, Azuthorized to access Account Center to create new subscritons, cancel subscriptions, change service account, change billing for a subscription and is the account responsible for billing
+  - Service Administrator : 1 per azure subscription, Authorized to access Azure Management Portal
+  - Co-Administrators : 200 per subscription, same as service administrator but can not change the association of subscription with Azure Directory
+Azure Billing Alert
+Keeping track of how much cloud services are costing can be a challenge, and it can easily get out of control if you accidentally leave apps or VMs running for long periods of time, or transfer large amounts of data. The best way to ensure that you don’t get any nasty surprises is to set up billing alerts, where you’ll be notified by email should your bill pass a given threshold.
+The Billing Alerts service is currently in preview, and before you can set up a billing alert, you’ll need to enable the preview feature in the billing portal. 
+ - Sign in to the billing portal using your Microsoft account 
+ - Click preview features and scroll down the list to Billing Alert Service, and click try it now 
+ - In the BILLING ALERT SERVICE dialog, select the subscription for which you’d like to enable alerts from the menu, and then click the ‘tick’ icon in the bottom right corner 
+ - You should notice the status of the service change to you are active 
+
+While my Billing Alerts service was activated immediately, you might have to wait some time before the service is activated. 
+
+Some useful  links
+
+https://docs.microsoft.com/en-in/azure/billing/billing-getting-started
+https://docs.microsoft.com/en-in/azure/cost-management/cost-mgt-alerts-monitor-usage-spending
+https://www.petri.com/microsoft-azure-set-billing-alerts
+https://docs.microsoft.com/en-in/azure/billing/billing-create-free-services-included-free-account
+https://docs.microsoft.com/en-in/azure/billing/billing-avoid-charges-free-account
+----------------------------
+Azure Resource Group
+
+Resource groups are containers that provide a way to monitor, control access, provision and manage billing for collections of resources (assets) that are required to run an application, or used by a client or company department.
+
+Link:
+
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/manage-resource-groups-portal
+-------------------------------------------
+Azure Resource Lock
+
+- Mechanism for locking down resources you want to ensure have an extra layer of protection before they can be deleted
+- These locks sit outside of the Role Based Access Controls (RBAC) hierarchy and when applied will place the restriction on the resource for all users
+- As an administrator, you may need to lock a subscription, resource group, or resource to prevent other users in your organization from accidentally deleting or modifying  critical resources 
+
+- 2 options available:
+  - CanNotDelete: Authorised users can read and modify but not delete the resource
+  - ReadOnly: Authorised users can read the resource but cannot update or delete 
+
+
+Link: 
+ 
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-lock-resources
+----------------------------------------------
+Tagging a Resource Group / Resource
+
+Tags provide a way to logically organize resources with properties that you define. Tags can be applied to resource groups or resources directly. Tags can then be used to select resources or resource groups from the console, web portal, PowerShell, or the API. Tags are also particularly useful when you need to organize resource for billing or management.
+
+Key Info:
+
+You can only apply tags to resources that support Resource Manager operations
+        ==> VMs, Virtual Networks and Storage created through the classic deployment model must be re-deployed through Resource Manager to support tagging
+                   --> A good way around this is to tag the resource group they belong to instead.
+
+        ==> All ARM resources support tagging
+
+
+    #Each resource or resource group can have a maximum of 15 tags.
+    #Tags are key/value pairs, name is limited to 512 characters, value is limited to 256 characters
+    #Tags are free-form text so consistent correct spelling is very important
+    #Tags defined on Resource Groups exist only on the group object and do not flow down to the resources under them
+        ==>Through the relationship you can easily find resource by filtering by tagged resource group
+        ==>We recommend keeping the tags to the resource group unless they are resource specific.
+    #Each tag is automatically added to the subscription-wide taxonomy
+        ==>Application or resource specific tags will "pollute" the tag list for the entire subscription
+
+Links:
+
+https://docs.microsoft.com/en-us/azure/azure-resource-manager/resource-group-using-tags
+ 
+https://sharegate.com/blog/everything-you-need-to-know-about-resource-tagging-in-azure
+-------------------------
+Azure Policy
+
+Azure Policy is a service in Azure that you use to create, assign, and manage policies. These policies enforce different rules and effects over your resources, so those resources stay compliant with your corporate standards and service level agreements. Azure Policy meets this need by evaluating your resources for non-compliance with assigned policies. For example, you can have a policy to allow only a certain SKU size of virtual machines in your environment. Once this policy is implemented, new and existing resources are evaluated for compliance. With the right type of policy, existing resources can be brought into compliance.
+
+
+Links: 
+https://docs.microsoft.com/en-us/azure/governance/policy/overview
+
+https://docs.microsoft.com/en-us/azure/governance/policy/assign-policy-portal
+
+
+## Policy Assignment
+
+A policy assignment is a policy definition that has been assigned to take place within a specific scope. This scope could range from a management group to a resource group. The term scope refers to all the resource groups, subscriptions, or management groups that the policy definition is assigned to. Policy assignments are inherited by all child resources. This design means that a policy applied to a resource group is also applied to resources in that resource group. However, you can exclude a sub-scope from the policy assignment
+
+## Policy Inheritance
+
+If not defined explicitly then any policy implemented on subscription level gets inherited on resource groups
+
+If policy is implemented on resource group level then it gets inherited by all objects of that resource group. Objects of other resource groups does not have any effect of the policy settings
+
+If any resource group or resource got created before the policy settings being created and implemented then they does not have any effect of the policy settings
+======================
+## What is Identity ?
+An identity is the information for an entity used by computer systems to represent a real world component. That component may be a person, application, or device. This information is being used to ensure the security of organization's networks and digital resources.
+
+## What is Authentication ?
+Authentication is the process of identifying an individual, he or she claims to be.  Usually it is done based on an username and password. Authentication is based on the idea that each individual user has unique information (Identity) that sets him or her apart from other users.
+
+## What is Authorizaton ?
+Authorization is the process of granting or denying user access to the network and other digital resources, once the user has been authenticated through the username and password. The amount of information and the amount of services the user has access depends on the user's authorization level.
+
+## What is Identity and Access Management ?
+IAM or Identity and Access Management, refers to a framework of policies and technologies for ensuring that the proper people in an enterprise have the appropriate access to technology resources. IAM systems fall under the overarching umbrella of IT security. Identity and access management systems not only identify, authenticate and authorize individuals who will be utilizing IT resources, but also the hardware and applications employees need to access.
+
+## What is a Directory ?
+A directory is similar to database which is used as source of information of Identities. Directories expose this data through network services. Active Directory (AD) is Microsoft's main directory product for corporate use.
+
+## What is Directory Service ?
+Directory service is a network service that stores, organizes and provides access to directory information in order to unify network resources. It is an essential part of today's network-centric computing infrastructure, and a pillar of IAM functionality.
+
+## Different Azure Active Directory Licensing
+Let’s take a look at some of Azure Active Directory licensing options. Before we begin, it’s important to note that Azure AD is already bundled into Office 365 licenses AND Azure licenses. However, Office and Azure clients can still purchase P1 and P2 versions for the additional benefits. So let’s jump into the different Azure Active Directory licensing choices.
+
+==> Free (Included in Azure Sub)
+- Limited to 500,000 Directory Objects
+- Identity management capabilities and device registration
+- Single Sign-On can be assigned to 10 apps per user
+- B2B collaboration capabilities (allows you to assign guest users that exist outside of your business)
+- Basic security reports
+
+
+==> Premium P1 ($6 per user per month)
+- Unlimited Directory Objects
+- Identity management capabilities and device registration
+- Single Sign-On can be assigned to unlimited apps per user
+- B2B collaboration capabilities (allows you to assign guest users that exist outside of your business)
+- Self-service password change (cloud users)
+- Connect (syncs on-premise AD to Azure AD)
+- Advanced reports
+- Group-based access management and provisioning
+- Ability to brand logon pages
+- Service Level Agreement
+- Application proxy
+
+- Dynamic groups, group creation, group naming policy, usage guidelines, etc.
+- On-premise writeback for Self-service reset, change, and unlock
+- Two-way sync between on-premise and ADD
+- Multi-factor authentication
+- Microsoft Identity Manager user CAL
+- Cloud App Discovery
+- Connect Health
+- Conditional Access based on health/location
+- Automatic password rollover (for group accounts)
+- Ability to grant conditional access based on location, device state, and group
+- Integrations with 3rd party identity governance partners
+
+- ToU
+ (Terms of Use : Before accessing certain cloud apps in your environment, you might want to get consent from users in form of accepting your terms of use)
+- Sharepoint limited access
+- OneDrive for Business (limited access)
+- Preview integration for 3rd party MFA partners
+- Cloud App Security Integration
+
+==> Premium P2 ($9 per user per month)
+- Everything offered in P1
+- Identity Protection
+- Privileged Identity Management
+- Access reviews
+======================
+REST is acronym for REpresentational State Transfer.
+
+What Is A REST API
+
+Let’s say you’re trying to find videos about Batman on Youtube. You open up Youtube, type “Batman” into a search field, hit enter, and you see a list of videos about Batman. A REST API works in a similar way. You search for something, and you get a list of results back from the service you’re requesting from.
+
+An API is an application programming interface. It is a set of rules that allow programs to talk to each other. The developer creates the API on the server and allows the client to talk to it.
+
+REST determines how the API looks like. REST is a set of rules that developers follow when they create their API. One of these rules states that you should be able to get a p…
+
+What is oAuth Authentication?
+
+Since the beginning of distributed personal computer networks, one of the toughest computer security nuts to crack has been to provide a seamless, single sign-on (SSO) access experience among multiple computers, each of which require unrelated logon accounts to access their services and content. Although still not fully realized across the entire internet, myriad, completely unrelated websites can now be accessed using a single physical sign-on. You can use your password, phone, digital certificate, biometric identity, two-factor authentication (2FA) or multi-factor authentication (MFA) SSO solution to log onto one place, and not have to put in another access credential all day to access a bunch of others. We have OAuth to thank for much of it.
+
+OAuth definition
+
+OAuth is an open-standard authorization protocol or framework that describes how unrelated servers and services can safely allow authenticated access to their assets without actually sharing the initial, related, single logon credential. In authentication parlance, this is known as secure, third-party, user-agent, delegated authorization.
+
+How OAuth works
+
+Let’s assume a user has already signed into one website or service (OAuth only works using HTTPS). The user then initiates a feature/transaction that needs to access another unrelated site or service. The following happens (greatly simplified):
+
+    -The first website connects to the second website on behalf of the user, using OAuth, providing the user’s verified identity.
+    -The second site generates a one-time token and a one-time secret unique to the transaction and parties involved.
+    -The first site gives this token and secret to the initiating user’s client software.
+    -The client’s software presents the request token and secret to their authorization provider (which may or may not be the second site).
+    -If not already authenticated to the authorization provider, the client may be asked to authenticate. After authentication, the client is asked to approve the authorization transaction to the second website.
+    -The user approves (or their software silently approves) a particular transaction type at the first website.
+    -The user is given an approved access token (notice it’s no longer a request token).
+    -The user gives the approved access token to the first website.
+    -The first website gives the access token to the second website as proof of authentication on behalf of the user.
+    -The second website lets the first website access their site on behalf of the user.
+    -The user sees a successfully completed transaction occurring.
+
+    OAuth is not the first authentication/authorization system to work this way on behalf of the end-user. In fact, many authentication systems, notably Kerberos, work similarly. What is special about OAuth is its ability to work across the web and its wide adoption. It succeeded with adoption rates where previous attempts failed (for various reasons).
+
+Although not as simple as it could be, web coders seem to readily understand the involved transactions. Making a website OAuth-compatible can be done in a few hours to a day (much faster if you’ve done it before). For a little bit of extra effort, authenticated website access can be extended to literally hundreds of millions of additional users. There’s no need for a website to contain its own authentication system with the ability to scale to gigantic proportions.
+
+Some other protocols which are also used for this kind of federated identity management are
+OpenId
+SAML
+OAuth2 ( advance version of OAuth)
+================
+### How to communicate between multiple VNets
+We use the concept of VNet Peering in order to connect Multiple VNets. There are two types of VNet Perring available.
+ - Standard VNet Peering : Connects VNets with in the same region
+ - Global VNet Peering : Connects VNets in different regions
+
+Benefits
+-----------
+1. N/W traffic between peered VNets are private
+2. Provides Low latency, High Bandwidth(depends upon the VM size)
+3. Ability to communicate, transfer data accross Azure Regions/Subscriptions
+4. The traffic between VMs in peered VNets is routed directly through the Azure Backbone infrastructure and not through a Gateway or over public Internet
+
+Things to remember
+----------------------------
+. Peerings are not transitive
+. IP address range must be different and must not overlap between two VNets
+Load Balancer:- https://docs.microsoft.com/en-in/azure/load-balancer/load-balancer-overview
+Azure Alerts:- https://docs.microsoft.com/en-us/azure/azure-monitor/platform/data-platform
+https://docs.microsoft.com/en-us/azure/azure-monitor/platform/data-platform-metrics
+https://docs.microsoft.com/en-us/azure/azure-monitor/platform/alerts-metric-overview
+https://docs.microsoft.com/en-us/azure/azure-monitor/platform/diagnostic-settings
+https://docs.microsoft.com/en-in/azure/azure-monitor/learn/tutorial-viewdata
+https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/get-started-queries
+https://docs.microsoft.com/en-us/azure/kusto/
+ 
+Azure Storage
+The process of digitally saving data on a storage device is called Storage. Its benefits are – Durable and highly available, Secure, Scalable, Managed, Accessible. Below are the types of storage on Azure.
+Blob storage
+Azure Blob (Binary large objects) storage is Microsoft cloud’s storage solution for objects. Blob storage is optimized for storing massive amounts of unstructured data, such as text or binary data. Blob storage is ideal for:
+•	Serving images or documents directly to a browser.
+•	Storing files for distributed access.
+•	Streaming video and audio.
+•	Storing data for backup and restore, disaster recovery, and archiving.
+•	Storing data for analysis by an on-premises or Azure-hosted service.
+Objects in Blob storage can be accessed from anywhere in the world via HTTP or HTTPS protocol. Users or client applications can access blobs via URLs, the Azure Storage REST API, Azure PowerShell, Azure CLI, or an Azure Storage client library. The storage client libraries are available for multiple languages, including .NET, Java, Node.js, Python, PHP, and Ruby.
+Azure Files Share
+Azure Files Share enables to set up highly available network file shares that can be accessed via the standard Server Message Block (SMB) protocol. That means that multiple VMs can share the same files with both read and write access. You can also read the files using the REST interface or the storage client libraries.
+One thing that distinguishes Azure Files from files on a corporate file share is that you can access the files from anywhere in the world using a URL that points to the file and includes a shared access signature (SAS) token. You can generate SAS tokens; they allow specific access to a private asset for a specific amount of time.
+File shares can be used for many common scenarios:
+•	Many on-premises applications use file shares. This feature makes it easier to migrate those applications that share data to Azure. If you mount the file share to the same drive letter that the on-premises application uses, the part of your application that accesses the file share should work with minimal, if any, changes.
+•	Configuration files can be stored on a file share and accessed from multiple VMs. Tools and utilities used by multiple developers in a group can be stored on a file share, ensuring that everybody can find them, and that they use the same version.
+•	Resource logs, metrics, and crash dumps are the examples of data that can be written to a file share and processed or analyzed later.
+Queue storage
+The Azure Queue service is used to store and retrieve messages. Each queue message can be up to 64 KB in size, and a queue can contain millions of messages. Queues are generally used to store lists of messages to be processed asynchronously. 
+They allow to store large numbers of messages which you can access from anywhere in the world via authenticated calls using HTTP or HTTPS. A queue may contain millions of messages, up to the total capacity limit of a storage account. Queues are commonly used to create a backlog of work to be processed asynchronously.
+For example, say you want your customers to be able to upload pictures, and you want to create thumbnails for each picture. You could have your customer wait for you to create the thumbnails while uploading the pictures. An alternative would be to use a queue. When the customer finishes their upload, write a message to the queue. Then have an Azure Function retrieve the message from the queue and create the thumbnails. Each of the parts of this processing can be scaled separately, giving you more control when tuning it for your usage.
+Table storage
+It is a storage for NoSQL schema less structured data. Azure Table storage is now part of Azure Cosmos DB. In addition to the existing Azure Table storage service, there is a new Azure Cosmos DB Table API offering that provides throughput-optimized tables, global distribution, and automatic secondary indexes. 
+Disk storage
+An Azure managed disk is a virtual hard disk (VHD). It is like a physical disk in an on-premises server but, virtualized. Azure-managed disks are stored as page blobs, which are a random IO storage object in Azure. We call a managed disk 'managed' because it is an abstraction over page blobs, blob containers, and Azure storage accounts. With managed disks, all you have to do is provision the disk, and Azure takes care of the rest.
+Types of storage accounts
+Azure Storage offers several types of storage accounts. Each type supports different features and has its own pricing model.
+General-purpose v2 accounts: Basic storage account type for blobs, files, queues, and tables. Recommended for most scenarios using Azure Storage.
+General-purpose v1 accounts: Legacy storage account type for blobs, files, queues, and tables. Use general-purpose v2 accounts instead when possible.
+BlobStorage accounts: Legacy storage accounts for blob-only data. Use general-purpose v2 accounts instead when possible.
+FileStorage accounts: Files-only storage accounts with premium performance characteristics. Recommended for enterprise or high performance applications.
+BlockBlobStorage accounts: Storage accounts with premium performance characteristics for block and append blobs. Recommended for scenarios with high transactions rates, or scenarios that use smaller objects or scenarios that require consistently low storage latency.
+Access tiers for block blob data
+Azure Storage provides different options for accessing block blob data based on usage patterns. The available access tiers are:
+The Hot access tier. This tier is optimized for frequent access of objects in the storage account. Accessing data in the hot tier is most cost-effective, whereas storage costs are higher. New storage accounts are created in the hot tier access by default.
+The Cool access tier. This tier is optimized for storing large amounts of data for at least 30 days and infrequently accessed. Storing data in the cool tier is more cost-effective, but accessing that data may be more expensive than accessing data in the hot tier.
+The Archive access tier. This tier is available only for individual block blobs. The archive tier is optimized for data that can tolerate several hours of retrieval latency and that will remain in the archive tier for at least 180 days. The archive tier is the most cost-effective option for storing data. However, accessing that data is more expensive than accessing data in the hot or cool tiers.
+Storage account redundancy 
+To ensure that your data is durable, Azure Storage stores multiple copies of your data. When you set up your storage account, you select a redundancy option. Redundancy options for a storage account include:
+Locally redundant storage (LRS): A simple, low-cost redundancy strategy. Copies your data synchronously three times within a single availability zone / physical location in the primary region. 
+
+Zone-redundant storage (ZRS): Copies your data synchronously across three Azure availability zones / physical locations in the primary region.
+ 
+
+Geo-redundant storage (GRS): Copies your data synchronously three times within a single availability zone / physical location in the primary region using LRS. It then copies your data asynchronously to a single physical location in the secondary region.  
+Geo-zone-redundant storage (GZRS): Copies your data synchronously across three Azure availability zones / physical locations in the primary region using ZRS. It then copies your data asynchronously to a single physical location in the secondary region.  
+
+
+Secure access to storage accounts
+To ensure security of data, Azure Storage supports the following authorization methods:
+•	Azure Active Directory (Azure AD) integration for blob and queue data. Azure Storage supports authentication and authorization with Azure AD for the Blob and Queue services via Azure role-based access control (Azure RBAC). Authorizing requests with Azure AD is recommended for superior security and ease of use.
+•	Azure AD authorization over SMB for Azure Files. Azure Files supports identity-based authorization over SMB (Server Message Block) through either Azure Active Directory Domain Services (Azure AD DS) or on-premises Active Directory Domain Services (preview). The domain-joined Windows VMs can access Azure file shares using Azure AD credentials.
+•	Authorization with Shared Key. The Azure Storage Blob, Queue, Files, and Table services support authorization with Shared Key. A client using Shared Key authorization passes a header with every request that is signed using the storage account access key.
+•	Authorization using shared access signatures (SAS). A shared access signature (SAS) is a string containing a security token that can be appended to the URI for a storage resource. The security token encapsulates constraints such as permissions and the interval of access.
+•	Anonymous access to containers and blobs. A container and its blobs may be publicly available. When you specify that a container or blob is public, anyone can read it anonymously; no authentication is required.
+Encryption
+There are two basic kinds of encryption available for the core storage services.
+Encryption at rest: - Azure Storage encryption protects and safeguards the data to meet the organizational security and compliance commitments. Azure Storage automatically encrypts all data prior to persisting to the storage account and decrypts it prior to retrieval. The encryption, decryption, and key management processes are transparent to users. Customers can also choose to manage their own keys using Azure Key Vault.
+Client-side encryption: - Azure Storage client libraries provide methods for encrypting data from the client library before sending it across the wire and before decrypting the response. Data encrypted via client-side encryption is also encrypted at rest by Azure Storage.
+Transfer data to and from Azure Storage
+You have several options for moving data into or out of Azure Storage. Which option you choose depends on the size of your dataset, transfer frequency and your network bandwidth. Data transfer can be offline or over the network connection. Choose your solution depending on your Data size, Transfer frequency, Network. The data movement can be of the following types:
+Offline transfer using shippable devices - Use physical shippable devices when you want to do offline one-time bulk data transfer. Microsoft sends you a disk, or a secure specialized device. Alternatively, you can purchase device, copy data to the device and then ship it to Azure where the data is uploaded. The available options for this case are Data Box Disk, Data Box, Data Box Heavy, and Import/Export (use your own disks).
+Network Transfer - You transfer your data to Azure over your network connection. This can be done in many ways.
+•	Graphical interface - If you occasionally transfer just a few files and do not need to automate the data transfer, you can choose a graphical interface tool such as Azure Storage Explorer or a web-based exploration tool in Azure portal.
+•	Scripted or programmatic transfer - You can use optimized software tools that we provide or call our REST APIs/SDKs directly. The available scriptable tools are AzCopy, Azure PowerShell, and Azure CLI. For programmatic interface, use one of the SDKs for .NET, Java, Python, Node/JS, C++, Go, PHP or Ruby.
+•	On-premises devices - We supply you a physical or virtual device that resides in your datacenter and optimizes data transfer over the network. These devices also provide a local cache of frequently used files. The physical device is the Azure Stack Edge and the virtual device is the Data Box Gateway. Both run permanently in your premises and connect to Azure over the network.
+•	Managed data pipeline - You can set up a cloud pipeline to regularly transfer files between several Azure services and on-premises. Use Azure Data Factory to set up and manage data pipelines, and move and transform data for analysis.
+
+Storage APIs, libraries, and tools
+You can access resources in a storage account by any language that can make HTTP/HTTPS requests. Additionally, the core Azure Storage services offer programming libraries for several popular languages. These libraries simplify many aspects of working with Azure Storage by handling details such as synchronous and asynchronous invocation, batching of operations, exception management, automatic retries, operational behavior, and so forth. Libraries are currently available for the different languages and platforms.
+Cloud Interview Questions
+
+1. What are the different types of services offered in the cloud?
+IAAS	PAAS	SAAS
+In infrastructure as a service, you get the raw hardware from your cloud provider as a service i.e you get a server which you can configure as per own wish.	Platform as a Service, gives you a platform to publish without giving the access to the underlying software or OS. 	You get software as a service in Azure, i.e no infrastructure, no platform, simple software that you can use without purchasing it.
+For Example: Azure VM	For Example: Azure App Service allows Web Apps, Mobile Apps a platform in Azure to get published.	For Example: when you launch a VM on Azure, you are not buying the OS, you are basically renting it for the time you will be running that instance.
+2. What is cloud computing?
+Ans: It is the use of servers on the internet to “store”, “manage” and “process” data. The difference is, instead of using your own servers, you are using someone else’s servers to do your task, paying them for the time you use it for.
+3. What are the different cloud deployment models?
+Public Cloud: The infrastructure is owned by your cloud provider and the server that you are using could be a multi-tenant system.
+Private Cloud: The infrastructure is owned by you. Or your cloud provider gives you that service exclusively. For Example: Hosting your website with the cloud provider on a dedicated server.
+Hybrid Cloud: When you use both Public Cloud, Private Cloud together, it is called Hybrid Cloud. For Example: Using your in-house servers for confidential data, and the public cloud for hosting your company’s public facing website. This type of setup would be a hybrid cloud.
+4. I have some private servers on my premises, also I have distributed some of my workload on the public cloud, what is this architecture called?
+A.	Virtual Private Network
+B.	Private Cloud
+C.	Virtual Private Cloud
+D.	Hybrid Cloud
+Answer: D. Hybrid Cloud
+
+5. What is Microsoft Azure and why is it used?
+Explanation: As discussed above, the companies which provide the cloud service are called the Cloud Providers. There are a lot of cloud providers out there, out of them one is Microsoft Azure. It is used for accessing Microsoft’s infrastructure for cloud.
+6. Which service in Azure is used to manage resources in Azure?
+A.	Application Insights
+B.	Azure Resource Manager
+C.	Azure Portal
+D.	Log Analytics
+Answer: B Azure Resource Manager
+7. Which of the following web applications can be deployed with Azure?
+A.	ASP.NET
+B.	PHP
+C.	WCF
+D.	All of the mentioned
+Answer: D All of the mentioned
+
+
+8. What are Roles and why do we use them?
+Explanation: Roles are nothing servers in layman terms. These servers are managed, load balanced that work together to achieve a common goal. There are 3 types of roles in Microsoft Azure:
+Web Role – A web role is basically used to deploy a website, using languages supported by the IIS platform like, PHP, .NET etc. It is configured and customized to run web applications.
+Worker Role – A worker role is more like a help to the Web role. It is used to execute background processes.
+VM Role – The VM role is used by an user to schedule tasks and other windows services. This role can be used to customize the machines on which the web and worker role is running.
+9. A _________ role is a virtual machine instance running Microsoft IIS Web server that can accept and respond to HTTP or HTTPS requests.
+A.	Web
+B.	Server
+C.	Worker
+D.	Client
+Answer: A. Web 
+Explanation: The answer should be Web Roles, there are no roles such as Server or Client roles. Also, Worker roles can only communicate with Azure Storage or through direct connections to clients.
+Apart from this Azure Interview Questions Blog, if you want to get trained from professionals on this technology, you can opt for a structured training from edureka! Click below to know more.
+10. Is it possible to create a Virtual Machine using Azure Resource Manager in a Virtual Network that was created using classic deployment?
+Explanation: This is not supported. You cannot use Azure Resource Manager to deploy a virtual machine into a virtual network that was created using classic deployment.
+11. What are virtual machine scale sets in Azure?
+Ans: - Azure virtual machine scale sets are Azure compute resources that provide high availability to your applications. It lets you centrally create, manage, configure and update a large number of load balanced VMs. The number of VM instances in VM scale set can automatically increase or decrease in response to demand or a defined schedule.
+12. Are data disks supported within scale sets?
+Ans: Yes. A scale set supports an attached data disk configuration that applies to all VMs in the set. Other options for storing data include:
+•	Azure files (SMB shared drives)
+•	OS drive
+•	Temp drive (local, not backed by Azure Storage)
+•	Azure data service (for example, Azure tables, Azure blobs)
+•	External data service (for example, remote database)
+13. What is an Availability Set?
+Ans: An availability set is a logical grouping of VMs that allows Azure to understand how your application is built to provide redundancy and availability. It is recommended that two or more VMs are created within an availability set to provide for a highly available application.
+14. What are Fault Domains?
+Ans: A fault domain is a logical group of underlying hardware that share a common power source and network switch, similar to a rack within an on-premise data-centers. As you create VMs within an availability set, the Azure platform automatically distributes your VMs across these fault domains. This approach limits the impact of potential physical hardware failures, network outages, or power interruptions.
+15. What are Update Domains?
+Ans: An update domain is a logical group of underlying hardware that can undergo maintenance or can be rebooted at the same time. As you create VMs within an availability set, the Azure platform automatically distributes your VMs across these update domains. This approach ensures that at least one instance of your application always remains running as the Azure platform undergoes periodic maintenance.
+16. What are Network Security Groups?
+Ans: A network security group (NSG) contains a list of Access Control List (ACL) rules that allow or deny network traffic to subnets, NICs or both. NSGs can be associated with either subnets or individual NICs connected to a subnet. When an NSG is associated with a subnet, the ACL rules apply to all the VMs in that subnet. In addition, traffic to an individual NIC can be restricted by associating an NSG directly to a NIC.
+17. Do scale sets work with Azure availability sets?
+Ans: Yes. A scale set is an implicit availability set with 5 fault domains and 5 update domains. Scale sets of more than 100 VMs span multiple placement groups or multiple availability sets. An availability set of VMs can exist in the same virtual network as a scale set of VMs.
+18. What is a break-fix issue?
+Ans: Technical problems are called break-fix issue. It is an industry term which refers to “work involved in supporting a technology when it fails in the normal course of its function, which requires intervention by a support organization to restore the working order”.
+19. Why is Azure Active Directory used?
+Ans: Azure Active Directory is an Identity and Access Management system. It is used to grant access to employees to specific products and services in a network. For Example: Salesforce.com, twitter etc.
+20. What happens when you exhaust the maximum failed attempts for authenticating yourself via Azure AD?
+Ans: Accounts are locked out based on the IP address of the request and the passwords entered. The duration of the lockout increases based on the likelihood that it was an attack.
+21. Where can I find a list of applications that are pre-integrated with Azure AD and their capabilities?
+Ans: - Find the answer in https://docs.microsoft.com/en-us/azure/active-directory/manage-apps/what-is-application-management
+22. How can I use applications with Azure AD that I’m using on-premises?
+Ans: Azure AD gives you an easy and secure way to connect to the web applications you choose. You can access these applications in the same way you access your SaaS apps in Azure AD, no need for a VPN to change your network infrastructure.
+24. What is a VNet?
+Ans: VNet is a representation of a network in the cloud. It logically isolates your instances launched in the cloud, from the rest of the resources.
+25. What are the differences between Subscription Administrator and Directory Administrator?
+Service or Subscription Administrator: - There is one service admin per subscription. This role is authorized to manage resources in the Azure portal (portal.azure.com). If others need to sign in and access resources for the same subscription, it adds them as co-admins. This can also remove any user from co-admin right to make it a normal user. There may be 200 co-admins per subscription.
+Account or Directory Administrator: - Azure AD has a different set of admin roles to manage the directory and identity-related features. This can add subscriptions, deactivate subscriptions but it cannot delete the subscription. It does not have any access on resources. It can be accessed using url – account.azure.com.
+26. Are there any scale limitations for customers using managed disks?
+Ans: - Managed Disks eliminates the limits associated with storage accounts. However, the maximum limit is 50,000 managed disks per region and per disk type for a subscription.
+27. What is the difference between Service Bus Queues and Storage Queues?
+Ans: - Azure supports two types of queue mechanisms: Storage queues and Service Bus queues.
+
+'Storage queues' are part of the Azure Storage infrastructure. They allow to store large numbers of messages which you can access from anywhere in the world via authenticated calls using HTTP or HTTPS. A queue may contain millions of messages, up to the total capacity limit of a storage account. Queues are commonly used to create a backlog of work to be processed asynchronously.
+
+A 'message' is raw data produced by a service to be consumed or stored elsewhere. A queue message can be up to 64 KB in size. 
+
+'Service Bus queues' are part of the Azure messaging infrastructure that supports queuing, publish / subscribe and more advanced integration patterns. They are designed to integrate application(s) components that may span multiple communication protocols, data contracts, trust domains, or network environments.
+28. What is Azure Redis Cache? What are Redis databases
+Ans: - Redis, which stands for Remote Dictionary Server, is a fast, open-source (BSD licensed - the Berkeley Software Distribution, a Unix-like operating system. Imposes minimal restrictions on the use and distribution), in-memory, key-value data store based on the Redis software for use as a database, cache, message broker and queue. 
+
+Every Redis instance supports 16 databases. The database index is the number you see at the end of a Redis URL: redis://localhost:6379/0. The default database is 0 but you can change that to any number from 0 to 15.
+
+Redis provides different data structures such as hashes, strings, lists, sets, sorted sets with range queries, bitmaps, hyperloglogs, geospatial indexes, and streams. 
+29. Why doesn’t Azure Redis Cache have an MSDN class library reference like some of the other Azure services?
+Ans: - Microsoft Azure Redis Cache is based on the popular open source Redis Cache managed by Microsoft, giving you access to a secure, dedicated Redis cache. 
+A variety of Redis clients are available for many programming languages. Each client has its own API that makes calls to the Redis cache instance using Redis commands.
+
+Because each client is different, there is not one centralized class reference on MSDN; instead each client maintains its own reference documentation.
+31. Is it possible to add an existing VM to an availability set?
+Ans: No. If you want your VM to be part of an availability set, you need to create the VM within the set. There currently no way to add a VM to an availability set after it has been created.
+32. What are the username requirements when creating a VM?
+Ans: Usernames can be a maximum of 20 characters in length and cannot end in a period (“.”). The following usernames are not allowed:
+ 
+33. What are the password requirements when creating a VM?
+Ans: Passwords must be 12 – 123 characters in length and meet 3 out of the following 4 complexity requirements:
+•	Have lower characters
+•	Have upper characters
+•	Have a digit
+•	Have a special character (Regex match [W_])
+The following passwords are not allowed:
+ 
+34. How much storage can I use with a virtual machine?
+Ans: - Ultra SSD data disks hold up to 64 TB per disk. Premium SSD, Standard SSD and Standard HDD data disks  hold up to 32 TB per disk. The number of data disks you can use depends on the size of the virtual machine.
+35. How can one create a Virtual Machine in Powershell?
+# Define a credential object 
+$cred = Get-Credential 
+# Create a virtual machine configuration 
+$vmConfig = New-AzureRmVMConfig -VMName myVM -VMSize Standard_DS2 |
+` Set-AzureRmVMOperatingSystem -Windows -ComputerName myVM -Credential $cred | 
+` Set-AzureRmVMSourceImage -PublisherName MicrosoftWindowsServer -Offer WindowsServer ` 
+-Skus 2016-Datacenter -Version latest | Add-AzureRmVMNetworkInterface -Id $nic.Id
+36. How to create a Network Security Group and a Network Security Group Rule?
+# Create an inbound network security group rule for port 3389
+$nsgRuleRDP = New-AzureRmNetworkSecurityRuleConfig -Name myNetworkSecurityGroupRuleRDP -Protocol Tcp `
+ -Direction Inbound -Priority 1000 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * `
+ -DestinationPortRange 3389 -Access Allow
+
+# Create an inbound network security group rule for port 80
+$nsgRuleWeb = New-AzureRmNetworkSecurityRuleConfig -Name myNetworkSecurityGroupRuleWWW -Protocol Tcp `
+ -Direction Inbound -Priority 1001 -SourceAddressPrefix * -SourcePortRange * -DestinationAddressPrefix * `
+ -DestinationPortRange 80 -Access Allow
+
+# Create a network security group
+$nsg = New-AzureRmNetworkSecurityGroup -ResourceGroupName myResourceGroup -Location EastUS `
+ -Name myNetworkSecurityGroup -SecurityRules $nsgRuleRDP,$nsgRuleWeb
+
+37. How to create a new storage account and container using Power Shell?
+$storageName = "st" + (Get-Random)
+New-AzureRmStorageAccount -ResourceGroupName "myResourceGroup" -AccountName $storageName -Location "West US" -SkuName "Standard_LRS" -Kind Storage
+$accountKey = (Get-AzureRmStorageAccountKey -ResourceGroupName myResourceGroup -Name $storageName).Value[0]
+$context = New-AzureStorageContext -StorageAccountName $storageName -StorageAccountKey $accountKey 
+New-AzureStorageContainer -Name "templates" -Context $context -Permission Container
+38. How can one create a VM in Azure CLI?
+az vm create ` --resource-group myResourceGroup ` --name myVM --image win2016datacenter ` --admin-username azureuser ` --admin-password myPassword12
+Apart from this Azure Interview Questions Blog, if you want to get trained from professionals on this technology, you can opt for a structured training from edureka! Click below to know more.
+
+39. What are the various power states of a VM?
+Ans: - Starting, Running, Stopping, Stopped, Deallocating, Deallocated
+40. How can you retrieve the state of a particular VM?
+Get-AzureRmVM `
+ -ResourceGroupName myResourceGroup `
+ -Name myVM `
+ -Status | Select @{n="Status"; e={$_.Statuses[1].Code}}
+41. How can you stop a VM using Power Shell?
+Stop-AzureRmVM -ResourceGroupName myResourceGroupVM -Name "myVM" -Force
+42. Why was my client disconnected from the cache?
+Explanation: The following are some common reason for a cache disconnect.
+•	Client-side causes
+o	The client application was redeployed.
+o	The client application performed a scaling operation.
+o	In the case of Cloud Services or Web Apps, this may be due to auto-scaling.
+o	The networking layer on the client side changed.
+o	Transient errors occurred in the client or in the network nodes between the client and the server.
+o	The bandwidth threshold limits were reached.
+o	CPU bound operations took too long to complete.
+•	Server-side causes
+o	On the standard cache offering, the Azure Redis Cache service initiated a fail-over from the primary node to the secondary node.
+o	Azure was patching the instance where the cache was deployed
+o	This can be for Redis server updates or general VM maintenance.
+43. What is Azure Search?
+Ans: - Azure Cognitive Search (formerly known as "Azure Search") is a cloud based search service that gives developers - APIs and tools for building a rich search experience over private, heterogeneous content in web, mobile and enterprise applications.
+
+A search service has the following components:
+    - Search engine for full text search
+    - Persistent storage of user-owned indexed content
+    - APIs for indexing and querying
+    - Optional AI-based enrichments, creating searchable content out of images, raw text, application files
+    - Optional integration with other Azure services for data, machine learning/AI, and security
+44. My web app still uses an old Docker container image after I’ve updated the image on Docker Hub. Does Azure support continuous integration/deployment of custom containers?
+Ans: - ACS supports CI/CD pipeline
+45. What are the expected values for the Startup File section when I configure the runtime stack? What is runtime stack?
+Ans: - Runtime stack defines the technology stack used to develop the app (i.e. NET Core 3.0); Operating System (i.e. Linux) sets the app hosting platform.
+
+Azure App Service is a platform-as-a-service (PaaS) offering from Microsoft Azure available on Azure Stack Hub. The service enables developers to create web, API and Azure Functions apps for any platform or device. They can also integrate on-premises apps and automate their business processes. Azure Stack Hub cloud operators can run customer apps on fully managed virtual machines (VMs) with their choice of shared VM resources or dedicated VMs.
+For Node.Js, you specify the PM2 configuration file or your script file. For .NET Core, specify your compiled DLL name. For Ruby, you can specify the Ruby script that you want to initialize your app with.
+46. How are Azure Marketplace subscriptions priced?
+Ans:
+Free Software Trial: Full-featured version of the offer that is promotionally free for a limited period of time. You will not be charged Azure Marketplace fees for use of the offering during a trial period. Upon expiration of the trial period, customers will automatically be charged based on standard rates for use of the offering.
+Pay-As-You-Go: 
+Student:
+47. What is the difference between “price,” “software price,” and “total price” in the cost structure for Virtual Machine offers in the Azure Marketplace?
+Explanation: “Price” refers to the cost of the Azure Virtual Machine to run the software. “Software price” refers to the cost of the publisher software running on an Azure Virtual Machine. “Total price” refers to the combined total cost of the Azure Virtual Machine and the publisher software running on an Azure Virtual Machine.
+48. What are stateful and stateless microservices for Service Fabric? What is Azure Service Fabric?
+Ans: - There are broadly two types of microservices: “stateless” and “stateful”.
+Azure Service Fabric is a distributed systems platform that makes it easy to package, deploy and manage scalable and reliable microservices and containers. Azure Service Fabric provides a sophisticated, lightweight runtime that supports stateless and stateful microservices. Service Fabric also addresses the significant challenges in developing and managing cloud applications.
+49. What is the meaning of application partitions?
+Ans: - Application partitions is a feature in Windows Active Directory Domain Service. They enable admins to create areas in Active Directory to store data on DCs they choose rather than on any / every DC in a domain or forest. Admin can define which domain controllers should hold a copy of the partition known as a replica. Admin can configure any domain controller in a forest to hold any application partition replica. The existing site topology will be used to automatically create the necessary connection objects to replicate among the DCs that hold replicas of an application partition.
+50. What are special Azure Regions?
+Azure has some special regions that you may wish to use when buildingyour applications for compliance or legal purposes. These special regions include:
+•	US Gov Virginia and US Gov Iowa: - A physical and logical network-isolated instance of Azure for US government agencies and partners, operated by screened US persons. Includes additional compliance certifications such as FedRAMP and DISA. 
+•	China East and China North: - These regions are available through a unique partnership between Microsoft and 21Vianet, whereby Microsoft does not directly maintain the datacenters. 
+•	Germany Central and Germany Northeast: - These regions are available via a data trustee model whereby customer data remains in Germany under control of T-Systems, a Deutsche Telekom company, acting as the German data trustee.
+ 
+Microservices Architecture
+Microservices:- The microservices concept is deceptively simple. Complex, multi-purpose applications (a.k.a monoliths) are broken down into small, ideally single-purpose and self-contained services that are de-coupled and communicate with one another via well-defined messages. In theory, the benefit is threefold. Microservices are potentially:
+•	Easier to develop and update.
+•	More robust and scalable.
+•	Cheaper to operate and support.
+There are broadly two types of microservices: stateless and stateful.
+•	'Stateful' microservices possess saved data in a database that they read from and write to directly. When a stateful service terminates, it saves its state. Well-behaved stateful microservices do not tend to share databases with other microservices because that makes it difficult to maintain decoupling and well-defined interfaces.
+•	'Stateless' microservices do not possess any saved data. When a stateless service terminates it has nothing to save. They handle requests and return responses. Everything they need to know is supplied on the request and once the request is complete, they forget it.
+
+Concept- Decoupling of entire application in small small services. E.g. Amazon will have many partners - Buyers, Sellers, Admin comprising into a single application in case of monolithic application.  If I want to give 5% disciunt to buyers, I need to make change in code and delpoy the entire application. Instead of this, we can have microservices based architecture, where we can have many microservices, each microservice being an application for each partner. Meaning there will be one microservice application for buyer, one microservice application will be for seller and one microservice application for admin. If I want to give 5% discount to buyer, I need to make changes and deploy the Buyer application only. Also in case of monolithic, if one of the modules - admin or buyer or seller is down the entire applicatio goes down. But in case of microservices based architecture, if seller is down, seller will not be able to add further items but the buyer will be able to buy the items already added. As a result, the entire application will not go down. Also we can have multiple technology stack for microservices; one microservice application can be written in Java, other can be written in .Net and other can be written in Nodejs etc. 
+Differences between SOA, monolithic application and a micro service:- 
+•	Monolithic application is the entire application / the whole block of application. 
+•	In SOA, we define small small module but all in the same application. So modularity can be there. e.g.- In java application , we create diferent packages, interfaces for seller, admin, buyer etc. 
+•	In microservices, we go for more granular levels of breakdowns. One application for each of the partners - like one for buyers, one for sellers and one for admin. These application talk to each other via well defined messages using HTTP protocol.  
+
+Design a simple microservice architecture application: - If it is a new application, I will ask like who are the usrs, what are the existing schema, how the relationships are mapped. What are the dependency, like we can have buyers and sellers, so both are actually co related. We cant segregate them out completely. How the database can be managed and all. e.g. - Seller can have Name, Items tables; Buyers can have Cart, Items bought tables. So items for Buyers and Sellers are related, it cant be like a buyer is buying a pen and the seller does not sell a pen. Item count from seller is decremented by one and the item count for buyer is incremented by one. They communicate with each other using the HTTP for doing the same. Cart, Name/Id are not related so we can keep them out. We can build two microservices - one for buyer and one for seller. 
+
+How we can migrate a monolithic application into microservices based architecture:- It is a long term process. It cannot happen overnight. In case of monolithic there will be buyers, sellers, admin communicating over API. Parallelly we can design microservices for one of the partners, say, Sellers and instead of Buyers and Admin calling Seller API it will now call Sellers microservices. Same business logic for Sellers module can be used to build Sellers microservices. Simuilarly, we need to take care of table schema and mappings also. So its a long term process and it can be done slowly and gradually.
+
+Advantages of microservices based architecture:- 
+1. We can make code changes and deploy individual services independentantly.
+2. Its fault tolerant. 
+3. Different microservices can be written in different technology stack. 
+4. We can scale up the admin to have multiple admins and can have load balancer to balance the loads between different admins.
+
+Disadvantages of microservices based architecture:- 
+1.We can have different authentication protocol between different microservices. A particular microservice can have different auth protocol for communication with different microservices.
+2. Individual deployment strategy for each microservices.
+
+You have multiple layers of microservices applications. If something went wrong, how will you know that a particular microservice is failing and you need to debug that microservice log?
+We can mis-traffic all the logs of all the microservices to Splunk, Kibana/Elastic load stash / Search (ES). And for each request, we can generate a corelation ID and the same will be passed through headers of each  microservices. And if anything goes wrong with this request, we can later take out that request and do the analysis and we can also see how we can process it from backend. 
+We can have health check to look for all the servers. And suppose some particular services’ server went down then  it can send the notification to Kibana or we can have email notification in place. 
+
+Best practice of microservices:- 
+1. Each microservices can be build on separate technology.
+2. Separate build for each microservices.
+3. We can make individual database for each microservices instead of having only one databse for all the microservices.
+4. We can dockerize it.
+
+Technology stacks for ms:- Individual contributior or a team can decide which microservices will be build on which technology.
+
+How microservices communicate with each other, How we can restrict few people / application from accessing those ms:- We use Rest API to communicate between microservices and they communicate over HTTP/HTTPS. All the APIs are stateless. 
+
+How a client / user interacts with the microservices:- Client browers can get the info regarding photos/static pages (html) using CDN (Content Delivery Network). Now the client browser's Javascript will communicate using Rest API with the microservices.
+
+Example Diagram:-
+ 
+
+ 
+
+Dockers & Containers
+Concept: Suppose you are a developer and you have developed your code in dev environment where you are using Python 3.8 as Runtime engine, you have added all your dependencies by importing all the required libraries like requests and kitchen-sink. And also, you have made necessary configurations like writing DNS server name and making the Database connections. 
+Now you have moved your code from dev environment to Test environment where Runtime environment is Python 3.6. So, one of your code dependencies works (requests) but the other one (kitchen-sink) breaks and the configuration file also works. Then you think that you need to change your code a bit and you are okay with that. 
+But one fine day, your code is moved to Prod environment (where the Runtime engine is usually behind) which is using Python 2.7 as the Runtime engine. So both of your dependency breaks, the configuration file breaks. Basically, your code is crashing and burning this time. So, you are thinking why you took this job.
+So, two kinds of developer here – One who thinks that the code is running fine in Dev, so it’s the OPS problem now. And the other kind of developer is who thinks that it works in my machine, it worked in Dev environment. What if I package whatever my code needs to run in any environment and then ship that whole package into Prod.? One of the developers (Solomon Hykes) thought like this and in this way the Docker container was born in 2013. 
+ 
+Definition of Container: A Container is an atomic, self-contained package of software that includes everything (code, runtime, libraries, packages, configuration etc.) it needs to run. 
+When you package your code, configurations, runtime engine, dependencies, you create a Docker Image also known as Container Image. At this point your application is not running, you just have the image of your application. And when you run the Docker / Container Image, it creates a Container. 
+ 
+
+Now the big picture, you have your app which may be developed in Java or Python or any other language. And then we have a file called – Dockerfile which Dockerizes your app. This Dockerfile basically says my application needs this dependency, this configuration, this runtime engine. It also has the command to create the Docker Image for your application. 
+When you have the Docker Image, you have to save the Docker Image somewhere, that is called Repository. This is very similar when you save your jar file for Java application in a repository. Some of the popular Docker Image repository are DockerHub and Elastic Container Registry (ECR). Then your Docker Image gets deployed into Container. This is when your app starts running inside the Container. 
+Note that you can run your application as Container in any platform that supports Docker. One of the popular platforms to run your Container is Kubernetes Cluster. And Kubernetes has different flavors such as Amazon EKS, Google Kubernetes Engine. Since Kubernetes is opensource, you can install Kubernetes on Vanilla EC2 and run your Container there. Not only that, you run in any other Kubernetes Cluster Implementation even on prim.  
+ 
+Virtual Machine vs Container:  
+Containers and VMs have some similarities in resource utilization but they function differently. VMs are an abstraction of physical hardware turning one server into many servers. The Hypervisor allows different VMs to run on a single machine. But here the VMs have the apps, binary libraries and it also has a Guest OS. And this Guest OS takes up ten’s of GB of space. Also, the OS can be slow to boot. 
+On the other hand, Container is an abstraction of application layer that packages code and dependencies together. Multiple Containers can run on the same machine. In this case, we don’t need to package a Guest OS into our Container. So it takes way less space than the VM. That’s why even if the size of the underlying server is same, there can be way more containers than the VM.
+Advantages of Docker Container:
+1.	Since you are packaging whatever you need to run your code, it is platform independent. Its truly build it once and run it anywhere. It runs reliably in any environment.
+2.	Better resource utilization. Since Containers do not require a separate OS, they use much less resources than VM. This makes it possible to run many more Containers than VMs on single server.
+3.	Application Isolation. Although Containers run on the same server, they are isolated from each other. If one Container crashes, other applications on other Containers will keep running flawlessly and wont experience any technical problems. This isolation also decreases security risks. If one application is hacked, any negative effect will not spread to other running Containers. 
+4.	Containers are fast to create, replicate and destroy. Containers are lightweight and start very quickly because they do not need an OS boot. It means that your application can scale very quickly. 
+5.	Container orchestration problem is solved. 
+Azure DevOps
+Azure Boards
+1.	Creating Project Login to Azure DevOps (dev.azure.com/OrganisationName)  Click on New Project Enter Proj name, Visibility=Private, Version control=GIT, Work Item Process=Agile Create 
+2.	Create an EPIC Boards Work Items Click on New Work Item  Select Epic Give details
+3.	Create Feature It is a child of EPIC, so create it from EPIC/Add link
+4.	Create User Story Create and add Feature as its parent
+5.	Create Task 
+6.	Boards:  
+7.	Backlogs:  
+8.	Sprints:     
+9.	Queries:  
+Azure Repository
+Creating New Repository or Importing old Repository: 
+Create Pull Request on develop branch (into main branch):   
+4 types of merge while completing a pull request:  
+Commit:  
+If you select ‘Revert’ (usually on master branch), a new Pull request will get created on a temporary branch. 
+Cherry-pick from develop to master: Go to develop branch Commits Select one commit    
+If you select ‘Cherry-pick (usually on develop branch), a new Pull request will get created on a temporary branch. It signifies that this particular commit will go to master branch instead of all the Commits in the develop branch.  
+Tags: Latest commit / push will get tagged automatically.
+ 
+Service Connection
+Service connections enable you to connect to external and remote services to execute tasks in job. 
+Example – If you want to connect to Azure Clouds, you need to set up Azure subscription service connection. 
+ 
+Two ways to create a service connection:
+	Creating a new User in Azure AD
+	Azure App Registration – Register an app in the Azure portal, so the MS identity platform can provide authentication and authorization services for your app and its users.
+Using second way: 
+	Go to portal www.portal.azure.com
+	Go Azure Active Directory  App registrations  New Registration    
+	Now you need to give subscription access to your registered app. Navigate like below.  
+	Go to Access control  Role assignments  Add  Add Role assignment  
+	Now go to azure devops portal (dev.azure.com)  Project settings  Service connections  Create service connection  Select ‘Azure Resource Manager’  Next  
+	Select Authentication method= Service principal (manual / automatic)  Next 
+	Give Subscription Id & Name, Service principal Id (Application Id) from portal.azure.com  
+	Go to portal.azure.com Home/Default Directory/Certificates & secrets  Clieck on ‘New client secret’   Give Description and Expiry  Add   
+	Copy Value from above screenshot and give in ‘Service principal key’. 
+	Copy Tenant ID from portal.azure.com Home/Default Directory/WeApp/ Overview and paste. 
+	Click on Verify. Give Service connection name and Description  Click ‘Verify and save’ 
+	The Service connection is now created. Comes this screen.  
+	Now go to Pipelines  Releases  New pipeline  Create Stage1 by selecting ‘Azure App Service deployment’  
+	Now select the created Stage1  Tasks  Stage1  Select Azure subscription as below   
+	Now click on ‘Deploy Azure App Service’ 
+	This is one way of creating a release pipeline by creating a Service Connection. 
+Service Connection by Creating a New User in Azure AD:
+	Go to portal.azure.com  Azure AD  Users  New Guest User  Select ‘Invite user’  Fille the required details  Click on Invite 
+	Now assign roles to the user created. Go to portal.azure.com  Azure AD  Users  UserName  Assign roles  Click on ‘Add assignments’  Select Global administrator  Add  
+	Now go to the Subscription  Access Control  Role assignments  Add  Add role assignment  Give Role = Owner and select the user created  Save
+	Now go to the Gmail  Go to the invitation mail  Accept Invitation
+	Now go to dev.azure.com  Releases New pipeline  Add Stage1 as added earlier
+	Go to Stage1 Tasks  Stage1Select the Azure Subscription as shown below  Click on Authorize and give userId and pwd  
+	What happened in Backend: Go to dev.azure.com  Project settings  Service connections  You will see a service connection entry created based on Subscription
+Azure Pipelines
+It is a practice of defining deployment pipelines through source code.  
+Creating Build Pipeline: Pipelines  New Pipeline  Select source code repo  Select Project  Select Maven from Configure section (others – Starter pipeline, Existing Azure pipelines YAML file, may also be selected)  Add and finalize the tasks [Show assistant  search ‘copy’ task  Select Copy files  Source Folder = $(system.defaultworkingdirectory) – this is the path on agent where source code gets copied Contents=.**/*.jar $(build.artifactstagingdirectory)  Add] Next task is publish artifact task search for it in show assistant and add it as shown below  
+Now click on save and go to Repository / Files and see that a file azure-pipelines.yaml has got added. 
+Now run the build pipeline Go to Pipelines Pipelines  Select the created pipeline Run pipeline  Run
+SonarQube integration with Azure DevOps:
+ 
+Create project in SonarQube dashboard: Login to SonarQube  Add project  Azure DevOps  Enter access token  Click on List repositories  Select the Project  Set up selected repository  Select ‘With Azure Pipelines’  Install SonarQube extension for AzureDevOps, Continue  Create service connection for SonarQube separately Click on Continue  In Configure analysis, select Maven (as this is Maven proj); add a job (Prepare Analysis Configuration) in the pipeline; Add another job (Publish Quality Gate Result); Continue  Save and run the pipeline
+  
+ 
+	Create ASP.Net Core Web App project (WebAppCore) in Visual Studio
+	Create ARM template by login in portal.azure.com  App services  Add (for creating web app) Next Next  Download a template for automation (on Create screen)  Download  
+	Other way of creating ARM template : portal.azure.com  Search for ‘Deploy a custom template’  Create a web app (or you can search for templates in google, many ARM templates are available in GitHub)  Create ARMWebCore Project in Visual Studio  Push into Azure Git
+	Now we have WebAppCore & ARMWebCore in Azure as shown below  
+	Now, create a build pipeline to build these applications 
+	Now create a release pipeline  Pipelines Releases  New  New release pipeline  Select App Service deployment  Click on Add artifact  Select Source (build pipeline)  Add  Click on 1 job, 1 task on the Stage  Select subscription  Add variables  Add a job (ARM Template deployment)  Add a job (Replace tokens) 
+Pipeline Flows
+  
+ 
+
+Creating Build Pipeline
+  
+
+  
+  
+       
+  
+ 
+Creating Release Pipeline
+  
+  
+ 
+
+Agent Pool
+Project settings  Agent pools  As of now we used Azure pipelines as shown below 
+How to setup our own agent pool: We can refer Microsoft agent pool documentation available in google. 
+Project settings  Agent pools Add pool  Select ‘Self hosted’ 
+ 
+Now add agent as below  
+Copy the commands and run from cmd  
+Managing Permissions
+   
+    
+
+ 
+JIRA & Zephyr Tool
+Different tools available for diff purposes:- Test management, Bug Reporting & Tracking tool... 
+
+Agile tool:- Jira, VersionOne, Teamcity,....   
+
+JIRA:- Agile Project management tool includes development, testing activities etc.
+
+JIRA by default does not contain Test management tool, but by using plugins (ex - Zephyr, XRAY, etc.), we can also do test management in jira.
+
+Note:- 
+1.Azure = Agile Project management + Test management + CI-CD tool
+2. Confluence:- Document collaboration tool by Atlassian like JIRA
+3. JIRA = Agile Project management + Test management (by using plugins)
+4. Jenkins = CI-CD tool
+
+1. Install and configure JIRA
+
+On premises + Cloud (Pro - licensed), Free version - 30days (10 users)
+
+Go to the link for JIRA and give ur gmail account
+
+testproject4vijay.atlassian.net
+
+Agile scrum activities /  Project Management activities:
+------------------------------------------------------------
+1. Creating a project --> Projects--> create project
+2. Add users (scrum team, PO, Scrum Master) --> Settings--> User Management --> 
+3. Create Version/ Epic --> Backlog --> Project--> select project--> Backlog--> Click on Version / Click on Epic --> Create Version / Create Epic -- > 
+4. Create Story --> Click on Create button on top menu bar -- > Select Issue Type= Story --> Give summary, Give description --> Assignee, Pririty --> Epic Link --> Click on Create
+5.  Create sprint --> Backlog--> Click on 'Create sprint' [appears above above a story]
+6. Add story to sprint--> Backlog--> drag and drop a story to a sprint
+7. Start sprint--> Backlog--> Click on 'Start sprint' --> Select start date, duration, Provide descriptioin --> Click on 'Start' --> Stories will now appear in Active Sprint tab in Scrum/Story board
+8. Create Task (This is not specefic to a story. It can be anything such as meeting)--> Same as creating story
+9. Create subtask (Specific to a story) --> From story click on create subtask
+10. Create Bug --> Same as creating story
+
+Note:- Story, Task, Bug, EPIC all are known as Issue
+
+Now, Test Management activity (Can be done using Zephyr or XRAY plugin)
+----------------------------------------------------------------------
+Add Zephyr plugin--> Apps --> Find new app --> Search for 'Zephyr' --> Click on Zephyr Squad--> Try Free --> Start Free trial
+Note that now you can see 'Test' also as one of the option while cfreating Story.
+
+
+1. Create test case==> Zephyr--> Create a Test--> Give summary, description --> Create
+1b. Search test and provide details ==> Zephyr--> Search a Test--> Select a test --> Click on 'Test Details' icon --> Provide test step, test data, Test Result and add test steps. 
+1b. Upload multiple test cases from Excel --> Have multiple tests cases created in excel in JIRA test case format, go to Search test in Zephyr==> Zephyr-->Import Tests--> Choose excel file --> Next--> Next--> Row number to begin import=2, Descriminator= 'Test case name change'--> Nexrt--> Give Sheetname--> Next --> Map the JIRA field with Excel sheet--> Next--> Validate--> Begin Import 
+
+2. Create Test cycle==> Zephyr--> Cycle summary--> Create new test cycle--> Give Version, Name, Desc, Build, Env, From/to date --> click on save
+21. Add test case to TestCycle==> 
+Zephyr--> Cycle summary--> Select Cycle--> Add tests 
+OR  
+Zephyr--> Search a test--> select test--> Click on Action icon--> Add to Test Cycle
+
+3. Update test case status==> Zephyr--> Search Test Executions --> Select test case --> Click on Execute icon--> Update status
+
+4. Report the bugs ==> JIRA--> Create--> Select Bug from dropdown--> Give summary and des, steps etc.
+4a. To see the Bug==> JIRA--> Issues--> all issues listed here
+
+5. Reports ==> 
+5a. Agile Reports==> JIRA--> Reports--> 
+5b. Test Report=> Zephyr--> Test Summary OR Test metric OR Traceability Matrix--> 
+
+Jenkins Tool
+1. Go to the folder from cmd where jenkins.war is located and type
+	java -jar jenkins.war --> To start jenkins [ctrl+c --> To stop jenkins]
+	java -jar jenkins.war --httpPort=9090
+	
+	http://localhost:8080/restart --> To restart the jenkins	
+	http://localhost:8080/systemInfo --> To check all system properties
+
+2. https://localhost:8080 --> For installing or starting jenkins (on standalone (jetty, winstone) server / servlet container)
+
+3. users/username/.jenkins --> Home directory of jenkins. Contains everything (logs, jobs, plugins, all configurations etc..) related to jenkins
+
+4. Tomcat servlet container or server
+	Benefits: To start all applications on a common server. Most applications run on Tomcat (Glassfish, JBoss etc)
+	Tomcat 5 or above is needed for Jenkins
+	Java 7 or abobe is needed for Jenkins
+
+	a. Download tomcat
+	b. Copy and place at any location (say Tomcat1)
+	c. Copy/ place jenkins.war inside Tomcat1/webapps folder
+	d. To start server
+		Go to Tomcat1/bin directory
+		Make all .sh files executable:- chmode +x*.sh
+		To start server :- From cmd type:- ./startup.sh [./shutdown.sh]
+		To verify if Tomcat started:- http://localhost:8080
+		To verify if jenkins started:- http://localhost:8080/jenkins
+
+5. Why to change home directory:- To move to location having enough space. And also project requirement.		
+	a. Copy paste everything from old jenkins home to new
+	b. Change JENKINS_HOME environment variable value to new home path
+
+6. Benefits of using Command Line Interface
+	a. Easier, Faster
+	b. Memory maganement wise more efficient
+	c. Continuous Integration
+
+	1. Go to manage jenkins --> Configure Global Security --> enable security should be checked
+	2. Go to http://localhost:8080/cli
+	4. Download jenkins-cli.jar and place at any location
+	5. Test if jenkins commandline is working by going to the path where jar is present from cmd 
+
+7. How to create users (configure, manage and assign roles)
+	Note:- whenever jenkins is installed, default user admin is created. Passowrd of the same can be found at Homedir/secrets/initialAdminPassword
+	a. Create new users --> Manage jenkins--> Manage Users --> Create User
+	b. Configure Uers --> After login, in top right corner of the window, user name is didplayed; click on the drop down beside it --> Click on Configure
+	c. Create and manage user roles --> Download Roles Strategy Plugin --> Manage Jenkins --> Manage Plugins --> Install the plugin and restart
+		I. Manage Jekins --> Configure Global Security --> Enable Security should be checked, Under Authorization section 'Role Based Strategy' (appears only after this plugin is installed) should be selected
+		II. Manage jenkins --> Manage and Assign Roles(will be available only after 'Role Based Strategy' is selected)--> Manage Roles --> [Create roles (like developer, employee etc) and assign access as applicable]
+		III. Managejenkins --> Manage and Assign Roles --> Assign Roles --> 
+		IV. Create projects and assign to users
+
+8.Basic Configurations: Manage jenkins --> Configure System 
+	a. Home directory [Workspace Root Directory, Build Record Root Directory]
+	b. System Message:- Some message on home[Manage Jenkins--> Configure Global Security-->Markup formatter]]
+	c. # of executors:- i.e. No of parallel jobs this jenkins is able to run
+	d. Label [Manage jenkins --> Manage Nodes i.e. machine {Different machines/agents canbe added to my machine called master machine to make sure that executions will happen on nodes and not on master machine}]
+	e. Quiet period --> No of secs this machine should wait before trigerring job and after a build
+	f. SCM checkout retry count --> No of count after a build fails
+	g. Restrict project naming --> [default,pattern, role based] To force the naming convention for a project by using pattern option
+	h. Global properties --> To enable to add key-value pair which can be referred at all the jenkins jobs like - ${key1} or $key1
+	i. Jenkins Location:- 
+	j. SSH Server
+	k. Shell --> By default jenkins has a bash shell on which it executes all shell commands. Can ive location of other shell / executable like - c:/cmd.exe
+
+9. Getting Started with Job / project
+	a. Jenkins--> New Items --> Add details. Create job/ project by clicking on 'New Item' and select free style project.
+	b. Tabs available--> General, Source Code Management, Build Triggers, Build, Post-build Actions
+	c. How to trigger job remotely ==> Project--> Configure--> Build Triggers--> Trigger builds remotely (e.g. from scripts)--> Copy the url from below authentication token field and open this from other browser/machine. The build will first get queqed and then run i.e. it was triggered remotely without going to jenkins
+	d. How to chain job executions ==> Project--> Configure--> Build Triggers--> Build after other projects are built
+	
+10. Integration with git
+	a. Create a project (e.g. java project)
+	b. Create a jenkins job to run the above program
+		i. Under Build Triggers, select Execute Window batch command from drop down and write all required cmd commands that are needed to run a java prog from cmd prompt
+		ii. Click on 'Build Now' from jenkins and look at the console output under 'Build History'  section
+	c. Add project to git and gitHub
+		i. From cmd, go to location of folder which is to be added
+		ii. To initialize the repo, type --> git init
+		iii. git status and add the two files (.java & .class) and commit
+		iv. To push to the remote repo, go to gitHub account (github.com) --> Click on 'Start a project'--> give name for repo--> Click on 'Create repository'
+		v. Copy the location of repo --> From cmd, git remote add origin 'give the copied path'
+		vi. git push -u origin master
+	d. Configure jenkins job
+		i. Add git plugin if not there
+		ii. Go to jenkins project-- Right click on project--> Configure --> Go to section 'Source Code Management' (will be available only if git plugin is installed)--> Give the url of the github
+		iii. Under Build Triggers select 'Poll SCM' and give clone expression under Schedule section to direct how often it will run after any code is pushed to git
+		iv. Now add readme.txt file (dir > readme.txt)
+
+11. How to use CATLIGHT (status notifier for jenkins / Build monitor) --> Tracks Builds, Bugs, Tasks -->[catlight.io]
+	a. Download, unzip and double click to start catlight --> Give jenkins url after starting jenkins
+	b. Select anonymous option if id/pwd not available
+	c. Select the projects/ jobs to monitor	--> Save
+	d. Go to Help and Blog sections on catlight.io for more details
+
+12. What is Automated Deployment--> [deployment means release]
+	a. Continuous delivery system ==> Build--> Deploy--> Test--> Release
+	b. Developers commit into SVN(e.g. git)-->
+		1. Build Job checkout (poll for changes) and build and produces war/ear artifacts-->
+		2. Deploy i.e. Testing job gets triggered on war/ear artifacts and does different kinds of testing (e.g. functional, performance etc.) in TEST env-->
+		3. Release i.e. Deploy the application in PROD env; this is called Release
+	c. In real sense 2 & 3 above are the actual deployments but when we talk about continuous Automated Deployment we consider the whole thing (i.e. from developer to prod)
